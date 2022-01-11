@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "195461677936",
+    "project_id": "tip-tracker-react-native-d547d",
+    "storage_bucket": "tip-tracker-react-native-d547d.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:195461677936:android:cf63b353f2bd0c3d1345b5",
+        "android_client_info": {
+          "package_name": "com.tiptracker"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "195461677936-c673fit861q3va6iilktg5ga7t0csl68.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBn7VqcC_tRkHdniav_7wIcB38ti_x_caI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "195461677936-c673fit861q3va6iilktg5ga7t0csl68.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

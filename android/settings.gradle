@@ -1,0 +1,11 @@
+rootProject.name = 'tipTracker'
+include ':@darron1217_react-native-background-geolocation-common'
+project(':@darron1217_react-native-background-geolocation-common').projectDir = new File(rootProject.projectDir, '../node_modules/@darron1217/react-native-background-geolocation/android/common')
+include ':react-native-boundary'
+project(':react-native-boundary').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-boundary/android')
+include ':react-native-boundary'
+project(':react-native-boundary').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-boundary/android')
+apply from: file("../node_modules/@react-native-community/cli-platform-android/native_modules.gradle"); applyNativeModulesSettingsGradle(settings)
+include ':app'
+include ':react-native-push-notification'
+project(':react-native-push-notification').projectDir = file('../node_modules/react-native-push-notification/android')

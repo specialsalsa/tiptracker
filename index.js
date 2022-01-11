@@ -2,7 +2,7 @@
  * @format
  */
 
-import {Alert, AppRegistry, PermissionsAndroid} from 'react-native';
+import {Alert, AppRegistry, Linking, PermissionsAndroid} from 'react-native';
 import App from './App';
 import {name as appName} from './app.json';
 import RNAndroidNotificationListener, {
@@ -12,19 +12,16 @@ import {LocalNotification, TipLogNotification} from './LocalPushController';
 import PushNotification from 'react-native-push-notification';
 import axios from 'axios';
 import Geolocation from 'react-native-geolocation-service';
-import {isWithinAHundredMeters} from './HelperFunctions';
-
-const askBackgroundPermission = async () => {
-  await PermissionsAndroid.request(
-    PermissionsAndroid.PERMISSIONS.ACCESS_BACKGROUND_LOCATION,
-  );
-};
+import {isWithin100Meters, askBackgroundPermission} from './HelperFunctions';
 
 let addressLocation = {};
+
 let address = '';
 let addressRecorded = false;
 
-askBackgroundPermission();
+// askBackgroundPermission();
+
+Linking.openSettings();
 
 PushNotification.configure({
   // (required) Called when a remote or local notification is opened or received
@@ -41,10 +38,6 @@ PushNotification.configure({
 
       case 'Okay':
         rating = 'Okay Tipper';
-        break;
-
-      case 'Good':
-        rating = 'Good Tipper';
         break;
 
       case 'Great':
@@ -74,14 +67,14 @@ PushNotification.configure({
 
 let notiSent = false;
 
-if (address) {
+if (!address) {
   Geolocation.watchPosition(
     position => {
       // const current = JSON.parse(position);
       // console.log(position.coords.latitude);
 
       if (
-        isWithinAHundredMeters(
+        isWithin100Meters(
           position.coords.latitude,
           // 32.74909824,
           addressLocation.addressLatitude,
@@ -97,7 +90,7 @@ if (address) {
         addressRecorded = false;
 
         if (
-          !isWithinAHundredMeters(
+          !isWithin100Meters(
             position.coords.latitude,
             // 32.74909824,
             addressLocation.addressLatitude,
@@ -110,6 +103,8 @@ if (address) {
           address = '';
         }
       }
+
+      // console.log(addressLocation.addressLatitude);
     },
     null,
     {
@@ -158,6 +153,7 @@ const headlessNotificationListener = async ({notification}) => {
     //   }
     // }
   }
+  // address = '8465 Broadway, Lemon Grove, CA 91945, USA';
 };
 
 AppRegistry.registerHeadlessTask(

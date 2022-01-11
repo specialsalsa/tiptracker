@@ -21,8 +21,8 @@ import axios from 'axios';
 PushNotification.createChannel(
   {
     channelId: '1', // (required)
-    channelName: 'My channel', // (required)
-    channelDescription: 'A channel to categorise your notifications', // (optional) default: undefined.
+    channelName: 'Tip notifications', // (required)
+    channelDescription: 'Receive notifications from the tip server', // (optional) default: undefined.
     playSound: true, // (optional) default: true
     soundName: 'default', // (optional) See `soundName` parameter of `localNotification` function
     importance: 5, // (optional) default: Importance.HIGH. Int value of the Android notification importance
