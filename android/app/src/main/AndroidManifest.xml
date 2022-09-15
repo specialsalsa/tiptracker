@@ -1,6 +1,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
   package="com.tiptracker">
 
+  <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+  <uses-permission android:name="android.permission.WAKE_LOCK" />
+
     <uses-permission android:name="android.permission.INTERNET" />
 
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
@@ -8,7 +11,7 @@
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
 
-    <!-- added these -->
+
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <permission
       android:name="${applicationId}.permission.C2D_MESSAGE"
@@ -19,7 +22,6 @@
 
     
 
-    <!-- -->
 
     <application
       android:name=".MainApplication"
@@ -46,6 +48,26 @@
               android:value="YOUR NOTIFICATION CHANNEL DESCRIPTION"/>
   <meta-data  android:name="com.dieam.reactnativepushnotification.notification_color"
               android:resource="@android:color/white"/>
+
+      <meta-data
+      android:name="com.supersami.foregroundservice.notification_channel_name"
+      android:value="Sticky Title"
+    />
+    <meta-data
+      android:name="com.supersami.foregroundservice.notification_channel_description"
+      android:value="Sticky Description."
+    />
+    <meta-data
+      android:name="com.supersami.foregroundservice.notification_color"
+      android:resource="@color/blue"
+    />
+    <!-- <service android:name="com.supersami.foregroundservice.ForegroundService"></service>
+    <service android:name="com.supersami.foregroundservice.ForegroundServiceTask"></service> -->
+
+    <service android:name="com.supersami.foregroundservice.ForegroundService" android:foregroundServiceType="location" ></service>
+
+    <service android:name="com.supersami.foregroundservice.ForegroundServiceTask" android:foregroundServiceType="location" ></service>
+              
 
   <receiver
       android:name="com.google.android.gms.gcm.GcmReceiver"

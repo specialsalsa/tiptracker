@@ -8,8 +8,6 @@ import {
   BackHandler,
 } from 'react-native';
 
-import {Actions} from 'react-native-router-flux';
-
 const TipLog = () => {
   return (
     <View style={styles.container}>

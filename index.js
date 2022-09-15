@@ -13,6 +13,8 @@ import PushNotification from 'react-native-push-notification';
 import axios from 'axios';
 import Geolocation from 'react-native-geolocation-service';
 import {isWithin100Meters, askBackgroundPermission} from './HelperFunctions';
+import ReactNativeForegroundService from '@supersami/rn-foreground-service';
+import RNLocation from 'react-native-location';
 
 let addressLocation = {};
 
@@ -21,7 +23,7 @@ let addressRecorded = false;
 
 // askBackgroundPermission();
 
-Linking.openSettings();
+// Linking.openSettings();
 
 PushNotification.configure({
   // (required) Called when a remote or local notification is opened or received
@@ -67,7 +69,65 @@ PushNotification.configure({
 
 let notiSent = false;
 
-if (!address) {
+RNLocation.configure({
+  distanceFilter: 0, // Meters
+  desiredAccuracy: {
+    ios: 'best',
+    android: 'balancedPowerAccuracy',
+  },
+  // Android only
+  androidProvider: 'auto',
+  interval: 5000, // Milliseconds
+  fastestInterval: 10000, // Milliseconds
+  maxWaitTime: 5000, // Milliseconds
+  // iOS Only
+  activityType: 'other',
+  allowsBackgroundLocationUpdates: false,
+  headingFilter: 1, // Degrees
+  headingOrientation: 'portrait',
+  pausesLocationUpdatesAutomatically: false,
+  showsBackgroundLocationIndicator: false,
+});
+let locationSubscription = null;
+let locationTimeout = null;
+
+ReactNativeForegroundService.add_task(
+  () => {
+    RNLocation.requestPermission({
+      ios: 'whenInUse',
+      android: {
+        detail: 'fine',
+      },
+    }).then(granted => {
+      console.log('Location Permissions: ', granted);
+      // if has permissions try to obtain location with RN location
+      if (granted) {
+        locationSubscription && locationSubscription();
+
+        locationSubscription = RNLocation.subscribeToLocationUpdates(
+          ([locations]) => {
+            locationSubscription();
+            locationTimeout && clearTimeout(locationTimeout);
+            console.log(locations);
+          },
+        );
+      } else {
+        locationSubscription && locationSubscription();
+        locationTimeout && clearTimeout(locationTimeout);
+        console.log('no permissions to obtain location');
+      }
+    });
+  },
+  {
+    delay: 1000,
+    onLoop: true,
+    taskId: 'taskid',
+    onError: e => console.log('Error logging:', e),
+  },
+);
+
+const watchPosition = () => {
+  // if (!address) {
   Geolocation.watchPosition(
     position => {
       // const current = JSON.parse(position);
@@ -104,14 +164,46 @@ if (!address) {
         }
       }
 
-      // console.log(addressLocation.addressLatitude);
+      console.log(position.coords.latitude);
     },
     null,
     {
       distanceFilter: 0,
     },
   );
-}
+  // }
+};
+
+ReactNativeForegroundService.register();
+AppRegistry.registerComponent(appName, () => App);
+
+const countdown = () => {
+  setInterval(() => {
+    let counter = 0;
+    counter++;
+    console.log(counter);
+  }, 10000);
+};
+
+ReactNativeForegroundService.add_task(() => '', {
+  delay: 10000,
+  onLoop: true,
+  taskId: 144,
+  onError: e => console.log(`Error logging:`, e),
+});
+
+ReactNativeForegroundService.update(() => '', {
+  delay: 10000,
+  onLoop: true,
+  taskId: 144,
+  onError: e => console.log(`Error logging:`, e),
+});
+
+ReactNativeForegroundService.start({
+  id: 144,
+  title: 'Foreground Service',
+  message: 'Tracking location',
+});
 
 const headlessNotificationListener = async ({notification}) => {
   if (notification) {

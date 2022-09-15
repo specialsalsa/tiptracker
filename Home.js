@@ -1,15 +1,11 @@
 import React from 'react';
-import {TouchableOpacity, Text} from 'react-native';
-import {Actions} from 'react-native-router-flux';
-import {View, StyleSheet} from 'react-native';
+import {View, StyleSheet, TouchableOpacity, Text} from 'react-native';
+import {withSafeAreaInsets} from 'react-native-safe-area-context';
 
 const Home = () => {
   return (
     <View style={styles.container}>
       <Text style={styles.text}>Welcome to Tip Tracker!</Text>
-      <TouchableOpacity style={{margin: 128}} onPress={() => Actions.tiplog()}>
-        <Text style={styles.text}>Tip Log</Text>
-      </TouchableOpacity>
     </View>
   );
 };
@@ -17,6 +13,7 @@ const Home = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    height: 100,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -28,7 +25,7 @@ const styles = StyleSheet.create({
   },
   text: {
     fontSize: 20,
-    color: 'black',
+    color: 'white',
   },
 });
 
