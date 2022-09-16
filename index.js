@@ -126,15 +126,12 @@ ReactNativeForegroundService.add_task(
   },
 );
 
-let notiSent = false;
-
 let locationId = Geolocation.watchPosition(
   position => {
     // const current = JSON.parse(position);
     // console.log(position.coords.latitude);
 
     if (
-      !notiSent &&
       isWithin100Meters(
         position.coords.latitude,
         32.7492457,
@@ -147,7 +144,6 @@ let locationId = Geolocation.watchPosition(
       Geolocation.clearWatch(locationId);
       console.log('Welcome home');
       TipLogNotification();
-      notiSent = true;
       addressRecorded = false;
 
       if (
@@ -160,7 +156,6 @@ let locationId = Geolocation.watchPosition(
           addressLocation.addressLongitude,
         )
       ) {
-        notiSent = false;
         address = '';
       }
     }
@@ -207,8 +202,10 @@ ReactNativeForegroundService.start({
 const headlessNotificationListener = async ({notification}) => {
   if (notification) {
     const parsedNoti = JSON.parse(notification);
-    if (parsedNoti.title == 'New Delivery!' && !addressRecorded) {
+    if (parsedNoti.title == 'hi' && !addressRecorded) {
       addressRecorded = true;
+
+      console.log('its working');
 
       const regex = /(.*$)/;
       address = parsedNoti.bigText.match(regex)[0];
