@@ -67,7 +67,7 @@ PushNotification.configure({
 
 // home coords: 32.74909824023569, -117.01460004260822
 
-let notiSent = false;
+// let notiSent = false;
 
 RNLocation.configure({
   distanceFilter: 0, // Meters
@@ -126,53 +126,52 @@ ReactNativeForegroundService.add_task(
   },
 );
 
-const watchPosition = () => {
-  // if (!address) {
-  Geolocation.watchPosition(
-    position => {
-      // const current = JSON.parse(position);
-      // console.log(position.coords.latitude);
+let notiSent = false;
+
+let locationId = Geolocation.watchPosition(
+  position => {
+    // const current = JSON.parse(position);
+    // console.log(position.coords.latitude);
+
+    if (
+      !notiSent &&
+      isWithin100Meters(
+        position.coords.latitude,
+        32.7492457,
+        // addressLocation.addressLatitude,
+        position.coords.longitude,
+        -117.01460062979753,
+        // addressLocation.addressLongitude,
+      )
+    ) {
+      Geolocation.clearWatch(locationId);
+      console.log('Welcome home');
+      TipLogNotification();
+      notiSent = true;
+      addressRecorded = false;
 
       if (
-        isWithin100Meters(
+        !isWithin100Meters(
           position.coords.latitude,
           // 32.74909824,
           addressLocation.addressLatitude,
           position.coords.longitude,
           // -117.01449932979753,
           addressLocation.addressLongitude,
-        ) &&
-        !notiSent
+        )
       ) {
-        // console.log('Welcome home');
-        TipLogNotification();
-        notiSent = true;
-        addressRecorded = false;
-
-        if (
-          !isWithin100Meters(
-            position.coords.latitude,
-            // 32.74909824,
-            addressLocation.addressLatitude,
-            position.coords.longitude,
-            // -117.01449932979753,
-            addressLocation.addressLongitude,
-          )
-        ) {
-          notiSent = false;
-          address = '';
-        }
+        notiSent = false;
+        address = '';
       }
+    }
 
-      console.log(position.coords.latitude);
-    },
-    null,
-    {
-      distanceFilter: 0,
-    },
-  );
-  // }
-};
+    console.log(position.coords.latitude);
+  },
+  null,
+  {
+    distanceFilter: 0,
+  },
+);
 
 ReactNativeForegroundService.register();
 AppRegistry.registerComponent(appName, () => App);
@@ -210,8 +209,7 @@ const headlessNotificationListener = async ({notification}) => {
     const parsedNoti = JSON.parse(notification);
     if (parsedNoti.title == 'New Delivery!' && !addressRecorded) {
       addressRecorded = true;
-      // if (parsedNoti.title == '(303) 578-8650') {
-      // arrayOfNotisText.push(parsedNoti.text);
+
       const regex = /(.*$)/;
       address = parsedNoti.bigText.match(regex)[0];
 
