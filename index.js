@@ -2,17 +2,15 @@
  * @format
  */
 
-import {Alert, AppRegistry, Linking, PermissionsAndroid} from 'react-native';
+import {AppRegistry} from 'react-native';
 import App from './App';
 import {name as appName} from './app.json';
-import RNAndroidNotificationListener, {
-  RNAndroidNotificationListenerHeadlessJsName,
-} from 'react-native-android-notification-listener';
+import {RNAndroidNotificationListenerHeadlessJsName} from 'react-native-android-notification-listener';
 import {LocalNotification, TipLogNotification} from './LocalPushController';
 import PushNotification from 'react-native-push-notification';
 import axios from 'axios';
 import Geolocation from 'react-native-geolocation-service';
-import {isWithin100Meters, askBackgroundPermission} from './HelperFunctions';
+import {isWithin100Meters} from './HelperFunctions';
 import ReactNativeForegroundService from '@supersami/rn-foreground-service';
 import RNLocation from 'react-native-location';
 
@@ -99,7 +97,6 @@ ReactNativeForegroundService.add_task(
         detail: 'fine',
       },
     }).then(granted => {
-      console.log('Location Permissions: ', granted);
       // if has permissions try to obtain location with RN location
       if (granted) {
         locationSubscription && locationSubscription();
@@ -171,41 +168,36 @@ let locationId = Geolocation.watchPosition(
 ReactNativeForegroundService.register();
 AppRegistry.registerComponent(appName, () => App);
 
-const countdown = () => {
-  setInterval(() => {
-    let counter = 0;
-    counter++;
-    console.log(counter);
-  }, 10000);
-};
-
 ReactNativeForegroundService.add_task(() => '', {
   delay: 10000,
   onLoop: true,
-  taskId: 144,
+  taskId: '144',
   onError: e => console.log(`Error logging:`, e),
 });
 
 ReactNativeForegroundService.update(() => '', {
   delay: 10000,
   onLoop: true,
-  taskId: 144,
+  taskId: '144',
   onError: e => console.log(`Error logging:`, e),
 });
 
-ReactNativeForegroundService.start({
-  id: 144,
-  title: 'Foreground Service',
-  message: 'Tracking location',
-});
+// Use these to stop and start the foreground service
+
+// ReactNativeForegroundService.start({
+//   id: 144,
+//   title: 'Foreground Service',
+//   message: 'Tracking location',
+// });
+
+// ReactNativeForegroundService.remove_task('144');
+// ReactNativeForegroundService.stop();
 
 const headlessNotificationListener = async ({notification}) => {
   if (notification) {
     const parsedNoti = JSON.parse(notification);
     if (parsedNoti.title == 'hi' && !addressRecorded) {
       addressRecorded = true;
-
-      console.log('its working');
 
       const regex = /(.*$)/;
       address = parsedNoti.bigText.match(regex)[0];

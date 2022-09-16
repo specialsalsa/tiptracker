@@ -1,7 +1,16 @@
 import React from 'react';
+import {View} from 'react-native';
 import {Text, StyleSheet} from 'react-native';
 import {getStatus} from './components/GetStatus';
-import {isWithin100Meters, askBackgroundPermission} from './HelperFunctions';
+import {askBackgroundPermission} from './HelperFunctions';
+import {
+  Provider as PaperProvider,
+  Card,
+  Title,
+  Paragraph,
+} from 'react-native-paper';
+
+import MyTabs from './Tabs';
 
 const App = () => {
   getStatus();
@@ -12,11 +21,16 @@ const App = () => {
   //   <Text style={styles.titleText}>Welcome to Tip Tracker!</Text>
   // </View>
 
-  return <Text>Hi, I'm Paul!</Text>;
+  return (
+    <PaperProvider>
+      <MyTabs />
+    </PaperProvider>
+  );
 };
 
 const styles = StyleSheet.create({
   container: {
+    height: 100,
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
