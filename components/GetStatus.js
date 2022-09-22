@@ -9,15 +9,15 @@ const AsyncAlert = async () =>
       'Tip Tracker needs your permission to access DoorDash notifications so it can get the tip data. Please allow access on the next screen.',
       [
         {
-          text: 'ok',
+          text: 'cancel',
           onPress: () => {
-            resolve('YES');
+            reject('NO');
           },
         },
         {
-          text: 'no',
+          text: 'ok',
           onPress: () => {
-            reject('NO');
+            resolve('YES');
           },
         },
       ],
@@ -25,7 +25,7 @@ const AsyncAlert = async () =>
     );
   });
 
-export const getStatus = async () => {
+export const GetStatus = async () => {
   const status = await RNAndroidNotificationListener.getPermissionStatus();
   console.log(status);
   if (status == 'denied' || status == 'unknown') {

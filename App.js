@@ -3,6 +3,7 @@ import {View} from 'react-native';
 import {Text, StyleSheet} from 'react-native';
 import {getStatus} from './components/GetStatus';
 import {askBackgroundPermission} from './HelperFunctions';
+import {useSomeCtx} from './context';
 import {
   Provider as PaperProvider,
   Card,
@@ -13,9 +14,7 @@ import {
 import MyTabs from './Tabs';
 
 const App = () => {
-  getStatus();
-
-  askBackgroundPermission();
+  // askBackgroundPermission();
 
   //   <View style={styles.container}>
   //   <Text style={styles.titleText}>Welcome to Tip Tracker!</Text>
@@ -23,6 +22,7 @@ const App = () => {
 
   return (
     <PaperProvider>
+      <Text style={styles.text}></Text>
       <MyTabs />
     </PaperProvider>
   );
@@ -43,6 +43,9 @@ const styles = StyleSheet.create({
   },
   titleText: {
     fontSize: 20,
+  },
+  text: {
+    color: 'white',
   },
 });
 

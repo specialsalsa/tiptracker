@@ -48,21 +48,40 @@ export const LocalNotification = (title, message) => {
   });
 };
 
-export const TipLogNotification = () => {
+export const TipLogNotification = (title, message) => {
   PushNotification.localNotification({
     autoCancel: true,
     channelId: '1',
     // bigText:
     //   'This is local notification demo in React Native app. Only shown, when expanded.',
     // subText: 'Local Notification Demo',
-    title: 'How did this customer tip?',
-    message:
-      'Record this tip rating to see it again the next time you get an order for this address.',
+    title: title,
+    message: message,
     vibrate: true,
     vibration: 300,
     playSound: true,
     soundName: 'default',
     actions: '["Bad", "Okay", "Great"]',
     invokeApp: false,
+  });
+};
+
+export const TrackingNotification = () => {
+  PushNotification.localNotification({
+    autoCancel: true,
+    channelId: '1',
+    // bigText:
+    //   'This is local notification demo in React Native app. Only shown, when expanded.',
+    // subText: 'Local Notification Demo',
+    title: 'Tracking Delivery',
+    message: 'Press Cancel to cancel tracking for this order.',
+    vibrate: true,
+    vibration: 300,
+    playSound: false,
+    ongoing: true,
+    soundName: 'default',
+    actions: '["Cancel"]',
+    invokeApp: false,
+    id: '3',
   });
 };
