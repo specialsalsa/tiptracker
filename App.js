@@ -6,6 +6,7 @@ import {
   LocalNotification,
   TipLogNotification,
   TrackingNotification,
+  UnlabeledTipLogNotification,
 } from './LocalPushController';
 import PushNotification from 'react-native-push-notification';
 import axios from 'axios';
@@ -100,10 +101,7 @@ const App = () => {
           Geolocation.clearWatch(locationId);
           PushNotification.cancelLocalNotification('3');
           console.log('Welcome home');
-          TipLogNotification(
-            'How did this customer tip?',
-            'Record this tip rating to see it again the next time you get an order for this address.',
-          );
+          TipLogNotification();
         }
 
         console.log(position.coords.latitude);
@@ -123,6 +121,7 @@ const App = () => {
     if (notification) {
       const parsedNoti = JSON.parse(notification);
       if (parsedNoti.title == 'New Delivery!' && !addressRecorded) {
+        PushNotification.cancelLocalNotification('4');
         const regex = /(.*$)/;
         address = parsedNoti.bigText.match(regex)[0];
         // address = '8465 Broadway, Lemon Grove, CA 91945, USA';
@@ -138,10 +137,7 @@ const App = () => {
             if (response.data !== 'no match found') {
               LocalNotification('Tip Alert!', response.data);
             } else if (toggleEnabled) {
-              TipLogNotification(
-                'No Tip Data Found!',
-                'Rate the offer below. You can update it at drop-off if it surprises or disappoints!',
-              );
+              UnlabeledTipLogNotification();
             }
           });
       }

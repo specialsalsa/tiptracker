@@ -48,21 +48,43 @@ export const LocalNotification = (title, message) => {
   });
 };
 
-export const TipLogNotification = (title, message) => {
+export const TipLogNotification = () => {
   PushNotification.localNotification({
     autoCancel: true,
     channelId: '1',
     // bigText:
     //   'This is local notification demo in React Native app. Only shown, when expanded.',
     // subText: 'Local Notification Demo',
-    title: title,
-    message: message,
+    title: 'How did this customer tip?',
+    message:
+      'Record this tip rating to see it again the next time you get an order for this address.',
     vibrate: true,
     vibration: 300,
     playSound: true,
     soundName: 'default',
     actions: '["Bad", "Okay", "Great"]',
     invokeApp: false,
+    id: '5',
+  });
+};
+
+export const UnlabeledTipLogNotification = () => {
+  PushNotification.localNotification({
+    autoCancel: true,
+    channelId: '1',
+    // bigText:
+    //   'This is local notification demo in React Native app. Only shown, when expanded.',
+    // subText: 'Local Notification Demo',
+    title: 'No Tip Data Found!',
+    message:
+      'Rate the offer below. You can update it at drop-off if it surprises or disappoints!',
+    vibrate: true,
+    vibration: 300,
+    playSound: true,
+    soundName: 'default',
+    actions: '["Bad", "Okay", "Great"]',
+    invokeApp: false,
+    id: '4',
   });
 };
 
