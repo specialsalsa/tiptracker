@@ -4,23 +4,18 @@ import {Button, Switch} from 'react-native-paper';
 import ReactNativeForegroundService from '@supersami/rn-foreground-service';
 import {black} from 'react-native-paper/lib/typescript/styles/themes/v2/colors';
 import state from './state';
-
-import {subscribeKey} from 'valtio/utils';
+import {ToggleEnabledContext} from './App';
 
 const Home = () => {
   const [serviceIsStarted, setserviceIsStarted] = useState(false);
 
-  let enabled;
-
-  subscribeKey(state, 'enabled', v => {
-    enabled = v;
-  });
+  const {toggleEnabled, setToggleEnabled} = useContext(ToggleEnabledContext);
 
   const handleNotiSwitch = () => {
-    state.enabled = !state.enabled;
+    setToggleEnabled(!toggleEnabled);
   };
   const ToggleNotisSwitch = () => {
-    return <Switch value={enabled} onValueChange={handleNotiSwitch} />;
+    return <Switch value={toggleEnabled} onValueChange={handleNotiSwitch} />;
   };
 
   const StartButton = () => {
