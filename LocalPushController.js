@@ -31,9 +31,22 @@ PushNotification.createChannel(
   created => console.log(`createChannel returned '${created}'`), // (optional) callback returns whether the channel was created, false means it already existed.
 );
 
+PushNotification.createChannel(
+  {
+    channelId: '2', // (required)
+    channelName: 'Foreground service', // (required)
+    channelDescription: 'Keeps location on in the background', // (optional) default: undefined.
+    playSound: true, // (optional) default: true
+    soundName: 'default', // (optional) See `soundName` parameter of `localNotification` function
+    importance: 2, // (optional) default: Importance.HIGH. Int value of the Android notification importance
+    vibrate: true, // (optional) default: true. Creates the default vibration pattern if true.
+  },
+  created => console.log(`createChannel returned '${created}'`), // (optional) callback returns whether the channel was created, false means it already existed.
+);
+
 export const LocalNotification = (title, message) => {
   PushNotification.localNotification({
-    autoCancel: true,
+    // onlyAlertOnce: true,
     channelId: '1',
     // bigText:
     //   'This is local notification demo in React Native app. Only shown, when expanded.',
@@ -43,6 +56,7 @@ export const LocalNotification = (title, message) => {
     vibrate: true,
     vibration: 300,
     playSound: true,
+    priority: 'max',
     soundName: 'default',
     invokeApp: false,
   });
@@ -88,7 +102,7 @@ export const UnlabeledTipLogNotification = () => {
   });
 };
 
-export const TrackingNotification = () => {
+export const TrackingNotification = userInfo => {
   PushNotification.localNotification({
     autoCancel: true,
     channelId: '1',
@@ -96,14 +110,14 @@ export const TrackingNotification = () => {
     //   'This is local notification demo in React Native app. Only shown, when expanded.',
     // subText: 'Local Notification Demo',
     title: 'Tracking Delivery',
-    message: 'Press Cancel to cancel tracking for this order.',
+    message: 'Click on this notification to review your orders.',
     vibrate: true,
     vibration: 300,
     playSound: false,
     ongoing: true,
     soundName: 'default',
-    actions: '["Cancel"]',
     invokeApp: false,
+    userInfo: userInfo,
     id: '3',
   });
 };

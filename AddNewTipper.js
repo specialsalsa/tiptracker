@@ -1,5 +1,5 @@
-import React, {useEffect} from 'react';
-import {View, StyleSheet, PermissionsAndroid, BackHandler} from 'react-native';
+import React, {useState, useReducer} from 'react';
+import {View, StyleSheet} from 'react-native';
 import {getStateAbbreviation} from './HelperFunctions';
 
 import Geolocation from 'react-native-geolocation-service';
@@ -20,24 +20,57 @@ import {
 } from 'react-native-paper';
 
 const AddNewTipper = () => {
-  const [address, setAddress] = React.useState('');
-  const [city, setCity] = React.useState('');
-  const [state, setState] = React.useState('');
+  const [address, setAddress] = useState('');
+  const [city, setCity] = useState('');
+  const [state, setState] = useState('');
 
-  const [tipRating, setTipRating] = React.useState('');
+  const [locationIsLoading, setLocationIsLoading] = useState('');
 
-  const [visible, setVisible] = React.useState(false);
-  const [snackbarVisible, setSnackbarVisible] = React.useState(false);
+  const handleGetLocation = () => {
+    Geolocation.getCurrentPosition(position => {
+      setLocationIsLoading(true);
+      axios
+        .get(`https://nominatim.openstreetmap.org/reverse`, {
+          params: {
+            lat: position.coords.latitude,
+            lon: position.coords.longitude,
+            format: 'geojson',
+          },
+        })
+        .then(result => {
+          setLocationIsLoading(false);
+          setAddress(
+            `${result.data.features[0].properties.address.house_number} ${result.data.features[0].properties.address.road}`,
+          );
+          setCity(
+            result.data.features[0].properties.address.city ||
+              result.data.features[0].properties.address.town,
+          );
+          setState(
+            getStateAbbreviation(
+              result.data.features[0].properties.address.state,
+            ),
+          );
+        });
+    });
+  };
+
+  const [submitIsLoading, setSubmitIsLoading] = useState('');
+
+  const [tipRating, setTipRating] = useState('');
+
+  const [dialogVisible, setDialogVisible] = useState(false);
+  const [snackbarVisible, setSnackbarVisible] = useState(false);
 
   const onToggleSnackBar = () => setSnackbarVisible(!snackbarVisible);
 
-  const [snackbarContent, setSnackbarContent] = React.useState('');
+  const [snackbarContent, setSnackbarContent] = useState('');
 
   const onDismissSnackBar = () => setSnackbarVisible(false);
 
-  const showDialog = () => setVisible(true);
+  const showDialog = () => setDialogVisible(true);
 
-  const hideDialog = () => setVisible(false);
+  const hideDialog = () => setDialogVisible(false);
 
   const postToDatabase = async (address, city, state) => {
     const addressString = `${address}, ${city}, ${getStateAbbreviation(state)}`;
@@ -47,26 +80,37 @@ const AddNewTipper = () => {
       return;
     }
 
-    const res = await axios.post(
-      'http://149.28.70.215:8020/setTipDataManual',
-      null,
-      {
-        params: {
-          address: addressString,
-          tipRating: tipRating,
+    try {
+      const res = await axios.post(
+        'https://wildlyle.dev:8020/setTipDataManual',
+        null,
+        {
+          params: {
+            address: addressString,
+            tipRating: tipRating,
+          },
         },
-      },
-    );
+      );
 
-    if (res.data === 'updated') {
-      setSnackbarContent('Existing tip data updated!');
-    } else if (res.data === 'saved') {
-      setSnackbarContent('New tip data stored!');
-    } else {
-      setSnackbarContent('Error setting tip data.');
+      if (res.data === 'updated') {
+        setSnackbarContent('Existing tip data updated!');
+      } else if (res.data === 'saved') {
+        setSnackbarContent('New tip data stored!');
+      } else {
+        setSnackbarContent('Error setting tip data.');
+      }
+    } catch (error) {
+      console.log(error);
     }
 
     onToggleSnackBar();
+  };
+
+  const handlePost = () => {
+    setSubmitIsLoading(true);
+    postToDatabase(address.trim(), city.trim(), state.trim()).then(res => {
+      setSubmitIsLoading(false);
+    });
   };
 
   return (
@@ -79,29 +123,8 @@ const AddNewTipper = () => {
           style={styles.button}
           icon="map-marker"
           mode="contained"
-          onPress={() =>
-            Geolocation.getCurrentPosition(position => {
-              axios
-                .get(`https://nominatim.openstreetmap.org/reverse`, {
-                  params: {
-                    lat: position.coords.latitude,
-                    lon: position.coords.longitude,
-                    format: 'geojson',
-                  },
-                })
-                .then(result => {
-                  console.log(result.data.features[0].properties.address);
-                  setAddress(
-                    `${result.data.features[0].properties.address.house_number} ${result.data.features[0].properties.address.road}`,
-                  );
-                  setCity(
-                    result.data.features[0].properties.address.city ||
-                      result.data.features[0].properties.address.town,
-                  );
-                  setState(result.data.features[0].properties.address.state);
-                });
-            })
-          }>
+          loading={locationIsLoading}
+          onPress={handleGetLocation}>
           Use current location
         </Button>
         <TextInput
@@ -141,13 +164,12 @@ const AddNewTipper = () => {
           style={styles.button}
           icon="check-bold"
           mode="contained"
-          onPress={() => {
-            postToDatabase(address, city, state);
-          }}>
+          loading={submitIsLoading}
+          onPress={handlePost}>
           Add New Tipper
         </Button>
         <Portal>
-          <Dialog visible={visible} onDismiss={hideDialog}>
+          <Dialog visible={dialogVisible} onDismiss={hideDialog}>
             <Dialog.Title>Alert</Dialog.Title>
             <Dialog.Content>
               <Paragraph>
@@ -188,9 +210,7 @@ const styles = StyleSheet.create({
   buttonContainer: {
     marginTop: 20,
   },
-  titleText: {
-    fontSize: 20,
-  },
+
   textContainer: {
     justifyContent: 'center',
     alignItems: 'center',

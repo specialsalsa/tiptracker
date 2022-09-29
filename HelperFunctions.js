@@ -76,8 +76,9 @@ export const getStateAbbreviation = fullName => {
     {name: 'Wyoming', abbreviation: 'WY'},
   ];
 
-  return (
-    abbreviations.find(state => state.name === fullName).abbreviation ||
-    fullName
-  );
+  if (abbreviations.some(state => state.name === fullName)) {
+    return abbreviations.find(state => state.name === fullName).abbreviation;
+  }
+
+  return fullName.toUpperCase();
 };
