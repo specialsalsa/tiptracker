@@ -1,6 +1,7 @@
 import {
   Card,
   Title,
+  Text,
   Paragraph,
   Button,
   IconButton,
@@ -78,6 +79,7 @@ const OrderCard = props => {
           <Card.Title title="Current Order" />
           <Card.Content>
             <Title>{props.restaurant}</Title>
+            <Text>{props.itemCount} items</Text>
             <View style={styles.iconContainer}>
               <Button
                 style={styles.iconButton}

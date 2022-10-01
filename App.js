@@ -40,7 +40,7 @@ let addressesArray = [];
 
 const App = () => {
   CodePush.sync({
-    updateDialog: true,
+    updateDialog: false,
     installMode: CodePush.InstallMode.IMMEDIATE,
   });
 
@@ -55,6 +55,7 @@ const App = () => {
   const [addressesArrayState, setAddressesArrayState] = useState([]);
 
   const addressRef = useRef('');
+  let restaurant;
 
   const state = {
     toggleEnabled,
@@ -177,21 +178,28 @@ const App = () => {
     if (notification) {
       const parsedNoti = JSON.parse(notification);
       if (parsedNoti.title == 'New Delivery!' && !currentlyTracking) {
-        console.log('made it');
         // PushNotification.cancelLocalNotification('4');
         const regex = /(.*$)/;
         // setAddress(() => parsedNoti.bigText.match(regex)[0]);
         addressRef.current = parsedNoti.bigText.match(regex)[0];
 
-        let restaurant = parsedNoti.bigText.replace('New Order: Go to ', '');
+        restaurant = parsedNoti.bigText.replace('New Order: Go to ', '');
         restaurant = restaurant.match(/^(.*)$/m)[0];
 
-        // address = '8465 Broadway, Lemon Grove, CA 91945, USA';
+        const itemRegex = /\d+(?= items?)/;
+
+        let itemCount = restaurant.match(itemRegex)[0];
+
+        restaurant = restaurant.match(/(.+?)(?=·)/g)[0];
+
+        console.log(restaurant);
 
         const addAddress = () => {
           addressesArray.unshift({
             key: Math.random().toString(),
+            timestamp: Date.now(),
             active: false,
+            itemCount: itemCount,
             restaurant: restaurant,
             address: addressRef.current,
           });
@@ -199,9 +207,21 @@ const App = () => {
           if (addressesArray.length > 2) {
             addressesArray.pop();
           }
+
+          if (addressesArray.length === 2) {
+            if (
+              addressesArray[0].timestamp - addressesArray[1].timestamp >
+                2000 ||
+              addressesArray[0].address == addressesArray[1].address
+            ) {
+              addressesArray.pop();
+            }
+          }
         };
 
         addAddress();
+
+        // address = '8465 Broadway, Lemon Grove, CA 91945, USA';
 
         axios
           .get('https://wildlyle.dev:8020/getTipData', {
@@ -293,6 +313,7 @@ const App = () => {
     RNAndroidNotificationListenerHeadlessJsName,
     () => headlessNotificationListener,
   );
+
   // askBackgroundPermission();
 
   //   <View style={styles.container}>

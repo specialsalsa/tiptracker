@@ -1,4 +1,4 @@
-import React, {useContext, useState} from 'react';
+import React, {useContext, useState, useEffect} from 'react';
 import {
   View,
   SafeAreaView,
@@ -10,9 +10,26 @@ import {Button, Switch} from 'react-native-paper';
 import ReactNativeForegroundService from '@supersami/rn-foreground-service';
 import {ToggleEnabledContext} from './App';
 import OrderCard from './OrderCard';
+import UpdateBanner from './UpdateBanner';
+import CodePush from 'react-native-code-push';
 
 const Home = () => {
   const [serviceIsStarted, setserviceIsStarted] = useState(true);
+
+  const [updateText, setUpdateText] = useState('');
+
+  useEffect(() => {
+    CodePush.getUpdateMetadata().then(update => {
+      if (update.isFirstRun) {
+        setUpdateText('tipTracker has been updated!');
+      } else {
+        setUpdateText('');
+      }
+    });
+    setTimeout(() => {
+      setUpdateText('');
+    }, 10000);
+  }, []);
 
   const {
     toggleEnabled,
@@ -39,6 +56,7 @@ const Home = () => {
       id: 144,
       title: 'Foreground Service',
       message: 'Tracking location',
+      importance: 2,
     });
   }
 
@@ -84,26 +102,30 @@ const Home = () => {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <Text style={styles.text} variant="headlineMedium">
-        Welcome to Tip Tracker!
-      </Text>
-      {serviceIsStarted ? <StopButton /> : <StartButton />}
-      <View style={styles.toggleContainer}>
-        <Text style={styles.smallText}>Unlabeled Offer Notifications</Text>
-        <ToggleNotisSwitch />
-      </View>
-      <View style={styles.cardContainer}>
-        {addressesArrayState?.map?.(order => (
-          <OrderCard
-            key={order.key}
-            id={order.key}
-            restaurant={order.restaurant}
-            address={order.address}
-          />
-        ))}
-      </View>
-    </SafeAreaView>
+    <>
+      {Boolean(updateText) && <UpdateBanner />}
+      <SafeAreaView style={styles.container}>
+        <Text style={styles.text} variant="headlineMedium">
+          Welcome to Tip Tracker!
+        </Text>
+        {serviceIsStarted ? <StopButton /> : <StartButton />}
+        <View style={styles.toggleContainer}>
+          <Text style={styles.smallText}>Unlabeled Offer Notifications</Text>
+          <ToggleNotisSwitch />
+        </View>
+        <View style={styles.cardContainer}>
+          {addressesArrayState?.map?.(order => (
+            <OrderCard
+              key={order.key}
+              id={order.key}
+              restaurant={order.restaurant}
+              itemCount={order.itemCount}
+              address={order.address}
+            />
+          ))}
+        </View>
+      </SafeAreaView>
+    </>
   );
 };
 
