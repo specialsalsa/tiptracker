@@ -11,7 +11,7 @@ import {
 import PushNotification from 'react-native-push-notification';
 import axios from 'axios';
 import Geolocation from 'react-native-geolocation-service';
-import {isWithin50Meters} from './HelperFunctions';
+import {isWithin50Meters, replaceWithAbbreviation} from './HelperFunctions';
 import ReactNativeForegroundService from '@supersami/rn-foreground-service';
 import {GetStatus} from './components/GetStatus';
 import {
@@ -182,6 +182,8 @@ const App = () => {
         const regex = /(.*$)/;
         // setAddress(() => parsedNoti.bigText.match(regex)[0]);
         addressRef.current = parsedNoti.bigText.match(regex)[0];
+
+        addressRef.current = replaceWithAbbreviation(addressRef.current);
 
         restaurant = parsedNoti.bigText.replace('New Order: Go to ', '');
         restaurant = restaurant.match(/^(.*)$/m)[0];

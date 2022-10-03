@@ -1,22 +1,25 @@
-import React, {useContext, useState, useEffect} from 'react';
-import {
-  View,
-  SafeAreaView,
-  StyleSheet,
-  Text,
-  PermissionsAndroid,
-} from 'react-native';
-import {Button, Switch} from 'react-native-paper';
+import React, {useContext, useState, useEffect, useCallback} from 'react';
+import {View, SafeAreaView, StyleSheet, PermissionsAndroid} from 'react-native';
+import {Button, Switch, Text} from 'react-native-paper';
 import ReactNativeForegroundService from '@supersami/rn-foreground-service';
 import {ToggleEnabledContext} from './App';
 import OrderCard from './OrderCard';
 import UpdateBanner from './UpdateBanner';
 import CodePush from 'react-native-code-push';
+import OnlineChip from './OnlineChip';
+import axios from 'axios';
+import {useNavigation} from '@react-navigation/native';
 
-const Home = () => {
-  const [serviceIsStarted, setserviceIsStarted] = useState(true);
+const Home = props => {
+  const [serviceIsStarted, setServiceIsStarted] = useState(true);
 
   const [updateText, setUpdateText] = useState('');
+
+  const [isConnected, setIsConnected] = useState(false);
+
+  const [isChecking, setIsChecking] = useState(false);
+
+  const navigation = useNavigation();
 
   useEffect(() => {
     CodePush.getUpdateMetadata().then(update => {
@@ -30,6 +33,34 @@ const Home = () => {
       setUpdateText('');
     }, 10000);
   }, []);
+
+  const handleDatabaseConnection = useCallback(async () => {
+    try {
+      const res = await fetch(
+        'https://wildlyle.dev:8020/checkDatabaseConnection',
+      );
+
+      if (!res.ok) {
+        throw new Error('Something went wrong');
+      }
+
+      const data = await res.json();
+
+      if (data) {
+        setIsConnected(data.isConnected);
+      } else {
+        setIsConnected(false);
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  }, []);
+
+  useEffect(() => {
+    navigation.addListener('focus', () => {
+      handleDatabaseConnection();
+    });
+  }, [handleDatabaseConnection]);
 
   const {
     toggleEnabled,
@@ -79,7 +110,7 @@ const Home = () => {
         icon="play"
         mode="outlined"
         onPress={() => {
-          setserviceIsStarted(true);
+          setServiceIsStarted(true);
         }}>
         Start Foreground Service
       </Button>
@@ -92,7 +123,7 @@ const Home = () => {
         icon="stop"
         mode="outlined"
         onPress={() => {
-          setserviceIsStarted(false);
+          setServiceIsStarted(false);
           ReactNativeForegroundService.remove_task('taskid');
           ReactNativeForegroundService.stop();
         }}>
@@ -104,15 +135,27 @@ const Home = () => {
   return (
     <>
       {Boolean(updateText) && <UpdateBanner />}
+
       <SafeAreaView style={styles.container}>
-        <Text style={styles.text} variant="headlineMedium">
-          Welcome to Tip Tracker!
-        </Text>
+        <View style={styles.textContainer}>
+          <Text variant="headlineMedium" style={styles.text}>
+            Welcome to Tip Tracker!
+          </Text>
+        </View>
+
+        <View style={styles.chipContainer}>
+          <OnlineChip
+            isConnected={isConnected}
+            setIsConnected={setIsConnected}
+            isChecking={isChecking}
+          />
+        </View>
         {serviceIsStarted ? <StopButton /> : <StartButton />}
         <View style={styles.toggleContainer}>
           <Text style={styles.smallText}>Unlabeled Offer Notifications</Text>
           <ToggleNotisSwitch />
         </View>
+
         <View style={styles.cardContainer}>
           {addressesArrayState?.map?.(order => (
             <OrderCard
@@ -132,11 +175,9 @@ const Home = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    // flexShrink: 1,
-    // height: 20,
     alignItems: 'center',
-    // justifyContent: 'center',
-    padding: 15,
+    paddingTop: 15,
+    paddingBottom: 15,
     backgroundColor: 'black',
   },
   cardContainer: {
@@ -144,13 +185,14 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
   },
   toggleContainer: {
-    // flex: 1,
     padding: 10,
     paddingTop: 50,
     flexDirection: 'row',
-    // flexShrink: 1,
-    // justifyContent: 'center',
-    // alignItems: 'center',
+    backgroundColor: 'black',
+  },
+  chipContainer: {
+    padding: 10,
+    flexDirection: 'row',
     backgroundColor: 'black',
   },
   buttonContainer: {
@@ -163,6 +205,11 @@ const styles = StyleSheet.create({
     fontSize: 25,
     color: 'white',
     paddingBottom: 15,
+  },
+  textContainer: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 20,
   },
   smallText: {
     fontSize: 15,
