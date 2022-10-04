@@ -76,7 +76,7 @@ const OrderCard = props => {
     <>
       <View style={styles.cardContainer}>
         <Card style={styles.card} elevation={2} mode="outlined">
-          <Card.Title title="Current Order" />
+          <Card.Title style={{marginBottom: -10}} title="Current Order" />
           <Card.Content>
             <Title>{props.restaurant}</Title>
             <Text>{props.itemCount} items</Text>
@@ -135,9 +135,9 @@ const OrderCard = props => {
 const styles = StyleSheet.create({
   cardContainer: {
     flex: 1,
-    padding: 20,
-    marginStart: 50,
-    marginEnd: 50,
+    // padding: 20,
+    // marginStart: 50,
+    // marginEnd: 50,
     flexDirection: 'column',
     flexGrow: 1,
     flexBasis: 'auto',
@@ -150,10 +150,10 @@ const styles = StyleSheet.create({
     marginEnd: 80,
   },
   card: {
-    borderWidth: 20,
+    // borderWidth: 20,
   },
   iconContainer: {
-    marginLeft: 100,
+    // marginLeft: 100,
     alignSelf: 'flex-end',
     flexDirection: 'row',
     justifyContent: 'flex-start',

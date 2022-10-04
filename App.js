@@ -39,10 +39,12 @@ const theme = {
 let addressesArray = [];
 
 const App = () => {
-  CodePush.sync({
-    updateDialog: false,
-    installMode: CodePush.InstallMode.IMMEDIATE,
-  });
+  useEffect(() => {
+    CodePush.sync({
+      updateDialog: false,
+      installMode: CodePush.InstallMode.IMMEDIATE,
+    });
+  }, []);
 
   const [toggleEnabled, setToggleEnabled] = useState(true);
 
@@ -174,147 +176,150 @@ const App = () => {
 
   GetStatus();
 
-  const headlessNotificationListener = async ({notification}) => {
-    if (notification) {
-      const parsedNoti = JSON.parse(notification);
-      if (parsedNoti.title == 'New Delivery!' && !currentlyTracking) {
-        // PushNotification.cancelLocalNotification('4');
-        const regex = /(.*$)/;
-        // setAddress(() => parsedNoti.bigText.match(regex)[0]);
-        addressRef.current = parsedNoti.bigText.match(regex)[0];
+  useEffect(() => {
+    const headlessNotificationListener = async ({notification}) => {
+      if (notification) {
+        const parsedNoti = JSON.parse(notification);
+        if (parsedNoti.title == 'New Delivery!' && !currentlyTracking) {
+          // PushNotification.cancelLocalNotification('4');
+          const regex = /(.*$)/;
+          // setAddress(() => parsedNoti.bigText.match(regex)[0]);
+          addressRef.current = parsedNoti.bigText.match(regex)[0];
 
-        addressRef.current = replaceWithAbbreviation(addressRef.current);
+          addressRef.current = replaceWithAbbreviation(addressRef.current);
 
-        restaurant = parsedNoti.bigText.replace('New Order: Go to ', '');
-        restaurant = restaurant.match(/^(.*)$/m)[0];
+          restaurant = parsedNoti.bigText.replace('New Order: Go to ', '');
+          restaurant = restaurant.match(/^(.*)$/m)[0];
 
-        const itemRegex = /\d+(?= items?)/;
+          const itemRegex = /\d+(?= items?)/;
 
-        let itemCount = restaurant.match(itemRegex)[0];
+          let itemCount = restaurant.match(itemRegex)[0];
 
-        restaurant = restaurant.match(/(.+?)(?=·)/g)[0];
+          restaurant = restaurant.match(/(.+?)(?=·)/g)[0];
 
-        console.log(restaurant);
+          console.log(restaurant);
 
-        const addAddress = () => {
-          addressesArray.unshift({
-            key: Math.random().toString(),
-            timestamp: Date.now(),
-            active: false,
-            itemCount: itemCount,
-            restaurant: restaurant,
-            address: addressRef.current,
-          });
+          const addAddress = () => {
+            addressesArray.unshift({
+              key: Math.random().toString(),
+              timestamp: Date.now(),
+              active: false,
+              itemCount: itemCount,
+              restaurant: restaurant,
+              address: addressRef.current,
+            });
 
-          if (addressesArray.length > 2) {
-            addressesArray.pop();
-          }
-
-          if (addressesArray.length === 2) {
-            if (
-              addressesArray[0].timestamp - addressesArray[1].timestamp >
-                2000 ||
-              addressesArray[0].address == addressesArray[1].address
-            ) {
+            if (addressesArray.length > 2) {
               addressesArray.pop();
             }
-          }
-        };
 
-        addAddress();
-
-        // address = '8465 Broadway, Lemon Grove, CA 91945, USA';
-
-        axios
-          .get('https://wildlyle.dev:8020/getTipData', {
-            params: {
-              address: addressRef.current,
-            },
-          })
-          .then(response => {
-            if (response.data !== 'no match found') {
-              LocalNotification(
-                `${response.data.tipRating} Alert!`,
-                `${response.data.tipRating}\n${response.data.address}`,
-              );
-              PushNotification.getDeliveredNotifications(notifications => {
-                if (
-                  notifications.filter(notification =>
-                    notification.body?.match(`${response.data.address}`),
-                  ).length > 1
-                ) {
-                  PushNotification.cancelLocalNotification(
-                    notifications.find(notification =>
-                      notification.body?.match(`${response.data.address}`),
-                    ).identifier,
-                  );
-                  console.log('made it');
-                }
-              });
-            } else if (toggleEnabled && !notiSent) {
-              UnlabeledTipLogNotification();
-              notiSent = true;
+            if (addressesArray.length === 2) {
+              if (
+                addressesArray[0].timestamp - addressesArray[1].timestamp >
+                  2000 ||
+                addressesArray[0].address == addressesArray[1].address
+              ) {
+                addressesArray.pop();
+              }
             }
-          });
-      }
-      // if (parsedNoti.title === 'hi') {
-      //   if (notification.action === 'Yes') {
-      //     console.log('it worked');
-      //   }
-      // }
-      if (
-        parsedNoti.title == 'Delivery Update' &&
-        parsedNoti.text.match('Pickup from') &&
-        !currentlyTracking
-      ) {
-        TrackingNotification();
-        setCurrentlyTracking(true);
-        watchPosition();
+            console.log(addressesArray);
+          };
 
-        addressesArray.forEach(order => {
+          addAddress();
+
+          // address = '8465 Broadway, Lemon Grove, CA 91945, USA';
+
           axios
-            .get('https://nominatim.openstreetmap.org/search', {
+            .get('https://wildlyle.dev:8020/getTipData', {
               params: {
-                q: order.address,
-                format: 'json',
+                address: addressRef.current,
               },
             })
-            .then(res => {
-              order.addressLatitude = res.data[0].lat;
-              order.addressLongitude = res.data[0].lon;
+            .then(response => {
+              if (response.data !== 'no match found') {
+                LocalNotification(
+                  `${response.data.tipRating} Alert!`,
+                  `${response.data.tipRating}\n${response.data.address}`,
+                );
+                PushNotification.getDeliveredNotifications(notifications => {
+                  if (
+                    notifications.filter(notification =>
+                      notification.body?.match(`${response.data.address}`),
+                    ).length > 1
+                  ) {
+                    PushNotification.cancelLocalNotification(
+                      notifications.find(notification =>
+                        notification.body?.match(`${response.data.address}`),
+                      ).identifier,
+                    );
+                    console.log('made it');
+                  }
+                });
+              } else if (toggleEnabled && !notiSent) {
+                UnlabeledTipLogNotification();
+                notiSent = true;
+              }
             });
-        });
+        }
+        // if (parsedNoti.title === 'hi') {
+        //   if (notification.action === 'Yes') {
+        //     console.log('it worked');
+        //   }
+        // }
+        if (
+          parsedNoti.title == 'Delivery Update' &&
+          parsedNoti.text.match('Pickup from') &&
+          !currentlyTracking
+        ) {
+          TrackingNotification();
+          setCurrentlyTracking(true);
+          watchPosition();
 
-        setAddressesArrayState(addressesArray);
+          addressesArray.forEach(order => {
+            axios
+              .get('https://nominatim.openstreetmap.org/search', {
+                params: {
+                  q: order.address,
+                  format: 'json',
+                },
+              })
+              .then(res => {
+                order.addressLatitude = res.data[0].lat;
+                order.addressLongitude = res.data[0].lon;
+              });
+          });
 
-        // axios
-        //   .get('https://nominatim.openstreetmap.org/search', {
-        //     params: {
-        //       q: addressRef.current,
-        //       format: 'json',
-        //     },
-        //   })
-        //   .then(res => {
-        //     addressLocation.addressLatitude = res.data[0].lat;
-        //     addressLocation.addressLongitude = res.data[0].lon;
-        //     console.log(addressLocation.addressLatitude);
-        //   });
+          setAddressesArrayState(addressesArray);
+
+          // axios
+          //   .get('https://nominatim.openstreetmap.org/search', {
+          //     params: {
+          //       q: addressRef.current,
+          //       format: 'json',
+          //     },
+          //   })
+          //   .then(res => {
+          //     addressLocation.addressLatitude = res.data[0].lat;
+          //     addressLocation.addressLongitude = res.data[0].lon;
+          //     console.log(addressLocation.addressLatitude);
+          //   });
+        }
+
+        // if (
+        //   parsedNoti.title == 'Delivery Update' &&
+        //   parsedNoti.text.match('Drop off')
+        // ) {
+        // }
       }
 
-      // if (
-      //   parsedNoti.title == 'Delivery Update' &&
-      //   parsedNoti.text.match('Drop off')
-      // ) {
-      // }
-    }
+      // address = '8465 Broadway, Lemon Grove, CA 91945, USA';
+    };
 
-    // address = '8465 Broadway, Lemon Grove, CA 91945, USA';
-  };
-
-  AppRegistry.registerHeadlessTask(
-    RNAndroidNotificationListenerHeadlessJsName,
-    () => headlessNotificationListener,
-  );
+    AppRegistry.registerHeadlessTask(
+      RNAndroidNotificationListenerHeadlessJsName,
+      () => headlessNotificationListener,
+    );
+  }, []);
 
   // askBackgroundPermission();
 
