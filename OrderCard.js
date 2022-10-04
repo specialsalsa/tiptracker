@@ -23,13 +23,6 @@ const OrderCard = props => {
   const {setCurrentlyTracking, setAddressesArrayState} =
     useContext(ToggleEnabledContext);
 
-  const [error, setError] = useState('');
-
-  const [snackbarVisible, setSnackbarVisible] = useState(false);
-  const [snackbarContent, setSnackbarContent] = useState('');
-  const onDismissSnackBar = () => setSnackbarVisible(false);
-  const onToggleSnackBar = () => setSnackbarVisible(!snackbarVisible);
-
   const removeThisOrder = () => {
     setAddressesArrayState(current => {
       if (current.length === 1) {
@@ -53,23 +46,10 @@ const OrderCard = props => {
         },
       );
 
-      if (res.data === 'updated') {
-        setSnackbarContent('Existing tip data updated!');
-      } else if (res.data === 'saved') {
-        setSnackbarContent('New tip data stored!');
-      } else {
-        setSnackbarContent('Error sending tip data.');
-      }
+      return res;
     } catch (error) {
       console.log(error);
-      setSnackbarContent('Error sending tip data.');
     }
-
-    setAddressesArrayState(current => {
-      return current.filter(order => order.key !== props.id);
-    });
-
-    onToggleSnackBar();
   };
 
   return (
@@ -115,19 +95,6 @@ const OrderCard = props => {
           </Card.Content>
         </Card>
       </View>
-      <View style={styles.snackbarContainer}>
-        <Snackbar
-          visible={snackbarVisible}
-          onDismiss={onDismissSnackBar}
-          action={{
-            label: 'OK',
-            onPress: () => {
-              onDismissSnackBar();
-            },
-          }}>
-          {snackbarContent}
-        </Snackbar>
-      </View>
     </>
   );
 };
@@ -144,10 +111,10 @@ const styles = StyleSheet.create({
     width: 'auto',
   },
   snackbarContainer: {
-    flex: 1,
+    // flex: 1,
     // padding: 30,
-    marginStart: 80,
-    marginEnd: 80,
+    // marginStart: 80,
+    // marginEnd: 80,
   },
   card: {
     // borderWidth: 20,

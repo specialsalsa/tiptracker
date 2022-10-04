@@ -5,6 +5,7 @@ import ReactNativeForegroundService from '@supersami/rn-foreground-service';
 import {ToggleEnabledContext} from './App';
 import OrderCard from './OrderCard';
 import UpdateBanner from './UpdateBanner';
+import UpdateSnackbar from './UpdateSnackbar';
 import CodePush from 'react-native-code-push';
 import OnlineChip from './OnlineChip';
 import axios from 'axios';
@@ -18,6 +19,12 @@ const Home = props => {
   const [isConnected, setIsConnected] = useState(false);
 
   const [isChecking, setIsChecking] = useState(false);
+
+  const [snackbarContent, setSnackbarContent] = useState(
+    "Nothing else matters when I'm with you",
+  );
+
+  const [snackbarVisible, setSnackbarVisible] = useState(false);
 
   const navigation = useNavigation();
 
@@ -167,6 +174,13 @@ const Home = props => {
             />
           ))}
         </View>
+        <View style={styles.snackbarContainer}>
+          <UpdateSnackbar
+            visible={snackbarVisible}
+            setSnackbarVisible={setSnackbarVisible}
+            snackbarContent={snackbarContent}
+          />
+        </View>
       </SafeAreaView>
     </>
   );
@@ -194,6 +208,9 @@ const styles = StyleSheet.create({
     padding: 10,
     flexDirection: 'row',
     backgroundColor: 'black',
+  },
+  snackbarContainer: {
+    alignItems: 'center',
   },
   buttonContainer: {
     // marginTop: 20,
