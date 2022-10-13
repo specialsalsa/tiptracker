@@ -74,6 +74,7 @@ const Home = props => {
     setToggleEnabled,
     currentlyTracking,
     addressesArrayState,
+    userKeyState,
   } = useContext(ToggleEnabledContext);
 
   if (serviceIsStarted) {

@@ -1,63 +1,31 @@
-import {
-  Card,
-  Title,
-  Text,
-  Paragraph,
-  Button,
-  IconButton,
-  Chip,
-  TouchableRipple,
-  withTheme,
-  useTheme,
-  Snackbar,
-} from 'react-native-paper';
 import {View, StyleSheet} from 'react-native';
+import {Card, Title, Button} from 'react-native-paper';
+
 import React, {useContext, useState} from 'react';
+import useHighlight from './hooks/useHighlight';
 import {ToggleEnabledContext} from './App';
 import axios from 'axios';
-import PushNotification from 'react-native-push-notification';
+import {useEffect} from 'react';
 
-const OrderCard = props => {
-  const {colors} = useTheme();
+const TipLogCard = props => {
+  const [highlight, setHighlight] = useState(useHighlight(props.tipRating));
 
-  const {
-    currentlyTracking,
-    setCurrentlyTracking,
-    setAddressesArrayState,
-    addressesArrayState,
-    userKeyState,
-    onSetTipData,
-  } = useContext(ToggleEnabledContext);
-
-  const removeThisOrder = () => {
-    setAddressesArrayState(current => {
-      if (current.length === 1) {
-        setCurrentlyTracking(current => false);
-        PushNotification.cancelLocalNotification('3');
-      }
-      return current.filter(order => order.key !== props.id);
-    });
-  };
-
-  const setTipData = async rating => {
+  const setTipData = async (address, tipRating) => {
     try {
       const res = await axios.post(
         'https://wildlyle.dev:8020/setTipData',
         null,
         {
           params: {
-            address: props.address,
-            tipRating: rating,
-            userKey: userKeyState,
+            address: address,
+            tipRating: tipRating,
           },
         },
       );
 
-      onSetTipData(rating);
-
-      return res;
-    } catch (error) {
-      console.log(error);
+      setHighlight(useHighlight(tipRating));
+    } catch (err) {
+      console.log(err);
     }
   };
 
@@ -65,44 +33,40 @@ const OrderCard = props => {
     <>
       <View style={styles.cardContainer}>
         <Card style={styles.card} elevation={2} mode="outlined">
-          <Card.Title style={{marginBottom: -10}} title="Current Order" />
+          <Card.Title style={{marginBottom: -10}} title="Logged Order" />
           <Card.Content>
-            <Title>{props.restaurant}</Title>
-            <Text>{props.itemCount} items</Text>
+            <Title>{props.address}</Title>
             <View style={styles.iconContainer}>
               <Button
                 style={styles.iconButton}
                 containerColor="black"
                 icon="thumb-down"
+                mode={highlight.bad}
                 size={15}
                 onPress={() => {
-                  setTipData('Bad Tipper');
-                  removeThisOrder();
+                  setTipData(props.address, 'Bad Tipper');
                 }}
               />
               <Button
                 style={styles.iconButton}
                 containerColor="black"
                 icon="hand-wave"
+                mode={highlight.okay}
                 size={15}
                 onPress={() => {
-                  setTipData('Okay Tipper');
-                  removeThisOrder();
+                  setTipData(props.address, 'Okay Tipper');
                 }}
               />
               <Button
                 style={styles.iconButton}
                 containerColor="black"
                 icon="thumb-up"
+                mode={highlight.great}
                 size={15}
                 onPress={() => {
-                  setTipData('Great Tipper');
-                  removeThisOrder();
+                  setTipData(props.address, 'Great Tipper');
                 }}
               />
-              <Chip compact={true} onPress={removeThisOrder}>
-                Cancel
-              </Chip>
             </View>
           </Card.Content>
         </Card>
@@ -111,12 +75,15 @@ const OrderCard = props => {
   );
 };
 
+export default TipLogCard;
+
 const styles = StyleSheet.create({
   cardContainer: {
     flex: 1,
     // padding: 20,
     // marginStart: 50,
-    // marginEnd: 50,
+    // marginEnd: 10,
+    marginBottom: 10,
     flexDirection: 'column',
     flexGrow: 1,
     flexBasis: 'auto',
@@ -141,5 +108,3 @@ const styles = StyleSheet.create({
     border: 5,
   },
 });
-
-export default withTheme(OrderCard);

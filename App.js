@@ -11,7 +11,11 @@ import {
 import PushNotification from 'react-native-push-notification';
 import axios from 'axios';
 import Geolocation from 'react-native-geolocation-service';
-import {isWithin50Meters, replaceWithAbbreviation} from './HelperFunctions';
+import {
+  getUserKey,
+  isWithin50Meters,
+  replaceWithAbbreviation,
+} from './HelperFunctions';
 import ReactNativeForegroundService from '@supersami/rn-foreground-service';
 import {GetStatus} from './components/GetStatus';
 import {
@@ -39,11 +43,22 @@ const theme = {
 let addressesArray = [];
 
 const App = () => {
+  // useEffect(() => {
+  //   CodePush.sync({
+  //     updateDialog: false,
+  //     installMode: CodePush.InstallMode.IMMEDIATE,
+  //   });
+  // }, []);
+
+  const [userKeyState, setUserKeyState] = useState('');
+
   useEffect(() => {
-    CodePush.sync({
-      updateDialog: false,
-      installMode: CodePush.InstallMode.IMMEDIATE,
-    });
+    const setKeyState = async () => {
+      const userKey = await getUserKey();
+      setUserKeyState(userKey);
+    };
+
+    setKeyState();
   }, []);
 
   const [toggleEnabled, setToggleEnabled] = useState(true);
@@ -56,8 +71,27 @@ const App = () => {
 
   const [addressesArrayState, setAddressesArrayState] = useState([]);
 
+  const [completedOrders, setCompletedOrders] = useState([]);
+
+  const onSetTipData = tipRating => {
+    addressesArray.forEach(address => {
+      addressRef.current = address.address;
+
+      address.tipRating = tipRating;
+
+      setCompletedOrders(addressesArray);
+
+      addressesArray = addressesArray?.filter?.(
+        order => order.key !== address.key,
+      );
+      setAddressesArrayState(addressesArray);
+      if (!addressesArray) setCurrentlyTracking(false);
+    });
+  };
+
   const addressRef = useRef('');
   let restaurant;
+  let itemCount;
 
   const state = {
     toggleEnabled,
@@ -68,6 +102,9 @@ const App = () => {
     setAddressesArrayState,
     currentlyTracking,
     setCurrentlyTracking,
+    userKeyState,
+    completedOrders,
+    onSetTipData,
   };
 
   let addressLocation = {};
@@ -89,17 +126,23 @@ const App = () => {
     },
 
     onAction: notification => {
+      setCurrentlyTracking(false);
+
       switch (notification.action) {
         case 'Bad':
           rating = 'Bad Tipper';
+
+          onSetTipData('Bad Tipper');
           break;
 
         case 'Okay':
           rating = 'Okay Tipper';
+          onSetTipData('Okay Tipper');
           break;
 
         case 'Great':
           rating = 'Great Tipper';
+          onSetTipData('Great Tipper');
           break;
       }
 
@@ -109,6 +152,7 @@ const App = () => {
             params: {
               address: addressRef.current,
               tipRating: rating,
+              userKey: userKeyState,
             },
           });
         } catch (error) {
@@ -152,13 +196,15 @@ const App = () => {
             )
           ) {
             Geolocation.clearWatch(locationId);
-            addressRef.current = address.address;
+            // addressRef.current = address.address;
 
-            addressesArray = addressesArray?.filter?.(
-              order => order.key !== address.key,
-            );
-            setAddressesArrayState(addressesArray);
-            if (!addressesArray) setCurrentlyTracking(false);
+            // setCompletedOrders(addressesArray);
+
+            // addressesArray = addressesArray?.filter?.(
+            //   order => order.key !== address.key,
+            // );
+            // setAddressesArrayState(addressesArray);
+            // if (!addressesArray) setCurrentlyTracking(false);
             PushNotification.cancelLocalNotification('3');
             console.log('Welcome home');
             TipLogNotification({key: address.key});
@@ -193,7 +239,7 @@ const App = () => {
 
           const itemRegex = /\d+(?= items?)/;
 
-          let itemCount = restaurant.match(itemRegex)[0];
+          itemCount = restaurant.match(itemRegex)[0];
 
           restaurant = restaurant.match(/(.+?)(?=·)/g)[0];
 
@@ -207,6 +253,7 @@ const App = () => {
               itemCount: itemCount,
               restaurant: restaurant,
               address: addressRef.current,
+              tipRating: rating || '',
             });
 
             if (addressesArray.length > 2) {
@@ -319,7 +366,14 @@ const App = () => {
       RNAndroidNotificationListenerHeadlessJsName,
       () => headlessNotificationListener,
     );
-  }, []);
+  }, [
+    addressRef.current,
+    addressesArray,
+    rating,
+    restaurant,
+    currentlyTracking,
+    setCurrentlyTracking,
+  ]);
 
   // askBackgroundPermission();
 
@@ -330,7 +384,7 @@ const App = () => {
   return (
     <ToggleEnabledContext.Provider value={state}>
       <PaperProvider>
-        <MyTabs />
+        <MyTabs onSetTipData={onSetTipData} />
       </PaperProvider>
     </ToggleEnabledContext.Provider>
   );

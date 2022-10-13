@@ -1,4 +1,9 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import {PermissionsAndroid} from 'react-native';
+
+import {customAlphabet} from 'nanoid/non-secure';
+
+const nanoid = customAlphabet('abcdefghijklmnopqrstuvwxyz0123456789', 10);
 
 export const isWithin50Meters = (
   currentLatitude,
@@ -145,4 +150,27 @@ export const replaceWithAbbreviation = address => {
   }
 
   return address;
+};
+
+export const setUserKey = async () => {
+  try {
+    await AsyncStorage.setItem('user_key', nanoid());
+  } catch (err) {
+    console.log('Saving error: ', err);
+  }
+};
+
+export const getUserKey = async () => {
+  try {
+    const userKey = await AsyncStorage.getItem('user_key');
+    if (userKey !== null) {
+      console.log('Key already stored');
+    } else {
+      setUserKey();
+    }
+
+    return userKey;
+  } catch (err) {
+    console.log('Fetching error: ', err);
+  }
 };

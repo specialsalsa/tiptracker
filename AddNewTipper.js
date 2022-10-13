@@ -1,4 +1,4 @@
-import React, {useState, useReducer} from 'react';
+import React, {useState, useReducer, useContext} from 'react';
 import {View, StyleSheet} from 'react-native';
 import {getStateAbbreviation} from './HelperFunctions';
 
@@ -19,7 +19,11 @@ import {
   Snackbar,
 } from 'react-native-paper';
 
+import {ToggleEnabledContext} from './App';
+
 const AddNewTipper = () => {
+  const {userKeyState} = useContext(ToggleEnabledContext);
+
   const [address, setAddress] = useState('');
   const [city, setCity] = useState('');
   const [state, setState] = useState('');
@@ -88,6 +92,7 @@ const AddNewTipper = () => {
           params: {
             address: addressString,
             tipRating: tipRating,
+            userKey: userKeyState,
           },
         },
       );

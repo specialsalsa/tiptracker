@@ -1,5 +1,5 @@
 import {createMaterialBottomTabNavigator} from '@react-navigation/material-bottom-tabs';
-import {NavigationContainer} from '@react-navigation/native';
+import {NavigationContainer, useLinkProps} from '@react-navigation/native';
 import React from 'react';
 import Home from './Home';
 import TipLog from './TipLog';
@@ -34,6 +34,13 @@ export default function MyTabs() {
           component={TipperLookup}
           options={{
             tabBarIcon: 'book-marker',
+          }}
+        />
+        <Tab.Screen
+          name="Tip Log"
+          component={TipLog}
+          options={{
+            tabBarIcon: 'book-open-page-variant',
           }}
         />
       </Tab.Navigator>
