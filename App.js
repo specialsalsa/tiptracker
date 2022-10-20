@@ -1,5 +1,5 @@
 import React, {useState, createContext, useRef, useEffect} from 'react';
-import {AppRegistry} from 'react-native';
+import {AppRegistry, useColorScheme} from 'react-native';
 import {View, Text, StyleSheet} from 'react-native';
 import {RNAndroidNotificationListenerHeadlessJsName} from 'react-native-android-notification-listener';
 import {
@@ -21,6 +21,7 @@ import {GetStatus} from './components/GetStatus';
 import {
   Provider as PaperProvider,
   MD3LightTheme as DefaultTheme,
+  MD3DarkTheme as DarkTheme,
   Card,
   Title,
   Paragraph,
@@ -33,16 +34,21 @@ import MyTabs from './Tabs';
 export const ToggleEnabledContext = createContext();
 
 const theme = {
-  ...DefaultTheme,
+  ...DarkTheme,
+  dark: true,
   version: 3,
+  mode: 'adaptive',
   colors: {
     ...DefaultTheme.colors,
+    surface: 'black',
   },
 };
 
 let addressesArray = [];
 
 const App = () => {
+  const colorScheme = useColorScheme();
+
   // useEffect(() => {
   //   CodePush.sync({
   //     updateDialog: false,
@@ -220,7 +226,11 @@ const App = () => {
 
   ReactNativeForegroundService.register();
 
-  GetStatus();
+  const notificationStatus = GetStatus();
+
+  useEffect(() => {
+    GetStatus();
+  }, [notificationStatus]);
 
   useEffect(() => {
     const headlessNotificationListener = async ({notification}) => {
@@ -407,7 +417,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
   },
   text: {
-    color: 'white',
+    // color: 'white',
   },
 });
 

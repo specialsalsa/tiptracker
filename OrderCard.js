@@ -27,6 +27,7 @@ const OrderCard = props => {
     addressesArrayState,
     userKeyState,
     onSetTipData,
+    rating: tipRating,
   } = useContext(ToggleEnabledContext);
 
   const removeThisOrder = () => {
@@ -53,7 +54,7 @@ const OrderCard = props => {
         },
       );
 
-      onSetTipData(rating);
+      onSetTipData(tipRating);
 
       return res;
     } catch (error) {

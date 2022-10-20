@@ -1,13 +1,13 @@
 import {View, StyleSheet} from 'react-native';
-import {Card, Title, Button} from 'react-native-paper';
+import {Card, Title, IconButton, useTheme} from 'react-native-paper';
 
-import React, {useContext, useState} from 'react';
+import React, {useState} from 'react';
 import useHighlight from './hooks/useHighlight';
-import {ToggleEnabledContext} from './App';
 import axios from 'axios';
-import {useEffect} from 'react';
 
 const TipLogCard = props => {
+  const theme = useTheme();
+
   const [highlight, setHighlight] = useState(useHighlight(props.tipRating));
 
   const setTipData = async (address, tipRating) => {
@@ -37,32 +37,34 @@ const TipLogCard = props => {
           <Card.Content>
             <Title>{props.address}</Title>
             <View style={styles.iconContainer}>
-              <Button
-                style={styles.iconButton}
-                containerColor="black"
+              <IconButton
+                theme={{
+                  colors: {primary: theme.colors.tertiary},
+                }}
                 icon="thumb-down"
                 mode={highlight.bad}
-                size={15}
                 onPress={() => {
                   setTipData(props.address, 'Bad Tipper');
                 }}
               />
-              <Button
+              <IconButton
+                theme={{
+                  colors: {primary: theme.colors.tertiary},
+                }}
                 style={styles.iconButton}
-                containerColor="black"
                 icon="hand-wave"
                 mode={highlight.okay}
-                size={15}
                 onPress={() => {
                   setTipData(props.address, 'Okay Tipper');
                 }}
               />
-              <Button
+              <IconButton
+                theme={{
+                  colors: {primary: theme.colors.tertiary},
+                }}
                 style={styles.iconButton}
-                containerColor="black"
                 icon="thumb-up"
                 mode={highlight.great}
-                size={15}
                 onPress={() => {
                   setTipData(props.address, 'Great Tipper');
                 }}

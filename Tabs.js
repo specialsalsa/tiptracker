@@ -1,5 +1,16 @@
-import {createMaterialBottomTabNavigator} from '@react-navigation/material-bottom-tabs';
-import {NavigationContainer, useLinkProps} from '@react-navigation/native';
+// import {createMaterialBottomTabNavigator} from '@react-navigation/material-bottom-tabs';
+import {createMaterialBottomTabNavigator} from '@juliushuck/react-native-navigation-material-bottom-tabs';
+import {
+  NavigationContainer,
+  useLinkProps,
+  DarkTheme as NavigationDarkTheme,
+  DefaultTheme as NavigationDefaultTheme,
+} from '@react-navigation/native';
+import {
+  MD3DarkTheme as PaperDarkTheme,
+  MD3LightTheme as PaperDefaultTheme,
+} from 'react-native-paper';
+import {useColorScheme} from 'react-native';
 import React from 'react';
 import Home from './Home';
 import TipLog from './TipLog';
@@ -9,12 +20,31 @@ import TipperLookup from './TipperLookup';
 
 const Tab = createMaterialBottomTabNavigator();
 
-export default function MyTabs() {
+const MyTabs = () => {
+  const CombinedDefaultTheme = {
+    ...PaperDefaultTheme,
+    ...NavigationDefaultTheme,
+    colors: {
+      ...PaperDefaultTheme.colors,
+      ...NavigationDefaultTheme.colors,
+    },
+  };
+  const CombinedDarkTheme = {
+    ...PaperDarkTheme,
+    ...NavigationDarkTheme,
+    colors: {
+      ...PaperDarkTheme.colors,
+      ...NavigationDarkTheme.colors,
+    },
+  };
+  const currentTheme = useColorScheme();
+
   return (
-    <NavigationContainer>
-      <Tab.Navigator
-        activeColor="#000000"
-        barStyle={{backgroundColor: 'lightgrey'}}>
+    <NavigationContainer
+      theme={
+        currentTheme === 'light' ? CombinedDefaultTheme : CombinedDarkTheme
+      }>
+      <Tab.Navigator>
         <Tab.Screen
           name="Home"
           component={Home}
@@ -46,4 +76,6 @@ export default function MyTabs() {
       </Tab.Navigator>
     </NavigationContainer>
   );
-}
+};
+
+export default MyTabs;

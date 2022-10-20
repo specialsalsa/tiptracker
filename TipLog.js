@@ -1,6 +1,6 @@
 import React, {useState, useEffect, useContext} from 'react';
 import axios from 'axios';
-import {StyleSheet, View, PermissionsAndroid, BackHandler} from 'react-native';
+import {StyleSheet, View} from 'react-native';
 import {Text, Button, ActivityIndicator, Portal} from 'react-native-paper';
 import {ToggleEnabledContext} from './App';
 import TipLogCard from './TipLogCard';
@@ -85,7 +85,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: 'black',
+    // backgroundColor: 'black',
   },
   buttonContainer: {
     marginTop: 20,

@@ -11,9 +11,9 @@
     "postinstall": "node ./android/fixAndroid/android-release-fix.js"
   },
   "dependencies": {
+    "@juliushuck/react-native-navigation-material-bottom-tabs": "^10.0.0",
     "@react-native-async-storage/async-storage": "^1.17.10",
-    "@react-navigation/material-bottom-tabs": "^6.2.3",
-    "@react-navigation/native": "^6.0.12",
+    "@react-navigation/native": "^6.0.13",
     "@supersami/rn-foreground-service": "^1.1.1",
     "appcenter": "4.4.5",
     "appcenter-analytics": "4.4.5",

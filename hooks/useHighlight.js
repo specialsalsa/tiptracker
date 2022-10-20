@@ -4,13 +4,13 @@ const useHighlight = tipRating => {
   let highlight = {};
 
   if (tipRating.includes('Bad') || tipRating.includes('Shit')) {
-    highlight = {bad: 'contained', okay: 'outlined', great: 'outlined'};
+    highlight = {bad: 'contained', okay: 'default', great: 'default'};
   } else if (tipRating.includes('Okay')) {
-    highlight = {bad: 'outlined', okay: 'contained', great: 'outlined'};
+    highlight = {bad: 'default', okay: 'contained', great: 'default'};
   } else if (tipRating.includes('Good') || tipRating.includes('Great')) {
-    highlight = {bad: 'outlined', okay: 'outlined', great: 'contained'};
+    highlight = {bad: 'default', okay: 'default', great: 'contained'};
   } else {
-    highlight = {bad: 'outlined', okay: 'outlined', great: 'outlined'};
+    highlight = {bad: 'default', okay: 'default', great: 'default'};
   }
 
   return highlight;

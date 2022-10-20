@@ -128,9 +128,9 @@ const TipperLookup = () => {
       {tipDataVisible && (
         <View style={styles.cardContainer}>
           <Card theme={cardTheme} style={styles.card} mode="outlined">
-            <Card.Title title="Tip Data" />
+            <Card.Title titleStyle={{color: 'white'}} title="Tip Data" />
             <Card.Content>
-              <Title>{tipData}</Title>
+              <Title style={{color: 'white'}}>{tipData}</Title>
             </Card.Content>
           </Card>
         </View>
@@ -155,13 +155,14 @@ export default TipperLookup;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'black',
+    // backgroundColor: 'black',
   },
   buttonContainer: {
     marginTop: 20,
   },
   card: {
-    borderWidth: 5,
+    // borderWidth: 5,
+    // color: 'white',
   },
   cardContainer: {
     flex: 1,

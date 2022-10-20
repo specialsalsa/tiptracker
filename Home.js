@@ -69,13 +69,8 @@ const Home = props => {
     });
   }, [handleDatabaseConnection]);
 
-  const {
-    toggleEnabled,
-    setToggleEnabled,
-    currentlyTracking,
-    addressesArrayState,
-    userKeyState,
-  } = useContext(ToggleEnabledContext);
+  const {toggleEnabled, setToggleEnabled, addressesArrayState} =
+    useContext(ToggleEnabledContext);
 
   if (serviceIsStarted) {
     ReactNativeForegroundService.add_task(
@@ -193,7 +188,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingTop: 15,
     paddingBottom: 15,
-    backgroundColor: 'black',
+    // backgroundColor: 'black',
   },
   cardContainer: {
     flex: 1,
@@ -203,12 +198,12 @@ const styles = StyleSheet.create({
     padding: 10,
     paddingTop: 50,
     flexDirection: 'row',
-    backgroundColor: 'black',
+    // backgroundColor: 'black',
   },
   chipContainer: {
     padding: 10,
     flexDirection: 'row',
-    backgroundColor: 'black',
+    // backgroundColor: 'black',
   },
   snackbarContainer: {
     alignItems: 'center',
@@ -221,7 +216,7 @@ const styles = StyleSheet.create({
   },
   text: {
     fontSize: 25,
-    color: 'white',
+    // color: 'white',
     paddingBottom: 15,
   },
   textContainer: {
@@ -233,7 +228,7 @@ const styles = StyleSheet.create({
     fontSize: 15,
   },
   switch: {
-    color: 'white',
+    // color: 'white',
   },
 });
 

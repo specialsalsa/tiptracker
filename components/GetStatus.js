@@ -36,5 +36,5 @@ export const GetStatus = async () => {
       console.log(err);
     }
   }
-  // return status;
+  return status;
 };
