@@ -70,11 +70,14 @@ const TipperLookup = () => {
     }
 
     try {
-      const res = await axios.get('https://wildlyle.dev:8020/getTipData', {
-        params: {
-          address: addressString,
+      const res = await axios.get(
+        'https://myapiurlgoes.heere:8020/getTipData',
+        {
+          params: {
+            address: addressString,
+          },
         },
-      });
+      );
 
       if (res.data === 'no match found') {
         setTipData('No match found for this address.');
@@ -114,7 +117,7 @@ const TipperLookup = () => {
           value={state}
           onChangeText={state => setState(state)}></TextInput>
       </View>
-      <View style={{marginTop: 20}}>
+      <View style={styles.buttonContainer}>
         <Button
           style={styles.button}
           icon="check-bold"
@@ -128,9 +131,14 @@ const TipperLookup = () => {
       {tipDataVisible && (
         <View style={styles.cardContainer}>
           <Card theme={cardTheme} style={styles.card} mode="outlined">
-            <Card.Title titleStyle={{color: 'white'}} title="Tip Data" />
+            <Card.Title
+              titleStyle={{color: 'white', textAlign: 'center'}}
+              title="Tip Data"
+            />
             <Card.Content>
-              <Title style={{color: 'white'}}>{tipData}</Title>
+              <Title style={{color: 'white', textAlign: 'center'}}>
+                {tipData}
+              </Title>
             </Card.Content>
           </Card>
         </View>
@@ -155,24 +163,37 @@ export default TipperLookup;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    // backgroundColor: 'black',
   },
-  buttonContainer: {
-    marginTop: 20,
-  },
+
   card: {
     // borderWidth: 5,
     // color: 'white',
+    marginLeft: 30,
+    marginRight: 30,
   },
+
+  button: {
+    marginTop: 20,
+  },
+
+  buttonContainer: {
+    alignItems: 'center',
+  },
+
   cardContainer: {
     flex: 1,
     padding: 20,
     marginStart: 50,
     marginEnd: 50,
     flexDirection: 'column',
-    flexGrow: 1,
+    // flexGrow: 1,
     flexBasis: 'auto',
     width: 'auto',
+  },
+
+  addressInput: {
+    marginStart: 20,
+    marginEnd: 20,
   },
 
   textContainer: {

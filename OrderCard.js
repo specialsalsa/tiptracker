@@ -43,7 +43,7 @@ const OrderCard = props => {
   const setTipData = async rating => {
     try {
       const res = await axios.post(
-        'https://wildlyle.dev:8020/setTipData',
+        'https://myapiurlgoes.heere:8020/setTipData',
         null,
         {
           params: {

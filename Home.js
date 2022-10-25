@@ -1,6 +1,6 @@
 import React, {useContext, useState, useEffect, useCallback} from 'react';
 import {View, SafeAreaView, StyleSheet, PermissionsAndroid} from 'react-native';
-import {Button, Switch, Text} from 'react-native-paper';
+import {Button, Switch, Text, Card} from 'react-native-paper';
 import ReactNativeForegroundService from '@supersami/rn-foreground-service';
 import {ToggleEnabledContext} from './App';
 import OrderCard from './OrderCard';
@@ -10,6 +10,8 @@ import CodePush from 'react-native-code-push';
 import OnlineChip from './OnlineChip';
 import axios from 'axios';
 import {useNavigation} from '@react-navigation/native';
+import * as rssParser from 'react-native-rss-parser';
+import RSSCard from './RSSCard';
 
 const Home = props => {
   const [serviceIsStarted, setServiceIsStarted] = useState(true);
@@ -44,7 +46,7 @@ const Home = props => {
   const handleDatabaseConnection = useCallback(async () => {
     try {
       const res = await fetch(
-        'https://wildlyle.dev:8020/checkDatabaseConnection',
+        'https://myapiurlgoes.heere:8020/checkDatabaseConnection',
       );
 
       if (!res.ok) {
@@ -154,6 +156,7 @@ const Home = props => {
           />
         </View>
         {serviceIsStarted ? <StopButton /> : <StartButton />}
+        <RSSCard />
         <View style={styles.toggleContainer}>
           <Text style={styles.smallText}>Unlabeled Offer Notifications</Text>
           <ToggleNotisSwitch />

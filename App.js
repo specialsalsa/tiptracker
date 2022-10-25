@@ -154,7 +154,7 @@ const App = () => {
 
       if (notification.action !== 'Cancel') {
         try {
-          axios.post('https://wildlyle.dev:8020/setTipData', null, {
+          axios.post('https://myapiurlgoes.heere:8020/setTipData', null, {
             params: {
               address: addressRef.current,
               tipRating: rating,
@@ -287,7 +287,7 @@ const App = () => {
           // address = '8465 Broadway, Lemon Grove, CA 91945, USA';
 
           axios
-            .get('https://wildlyle.dev:8020/getTipData', {
+            .get('https://myapiurlgoes.heere:8020/getTipData', {
               params: {
                 address: addressRef.current,
               },

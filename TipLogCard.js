@@ -13,7 +13,7 @@ const TipLogCard = props => {
   const setTipData = async (address, tipRating) => {
     try {
       const res = await axios.post(
-        'https://wildlyle.dev:8020/setTipData',
+        'https://myapiurlgoes.heere:8020/setTipData',
         null,
         {
           params: {
@@ -39,7 +39,7 @@ const TipLogCard = props => {
             <View style={styles.iconContainer}>
               <IconButton
                 theme={{
-                  colors: {primary: theme.colors.tertiary},
+                  colors: {primary: 'indianred'},
                 }}
                 icon="thumb-down"
                 mode={highlight.bad}
@@ -49,7 +49,7 @@ const TipLogCard = props => {
               />
               <IconButton
                 theme={{
-                  colors: {primary: theme.colors.tertiary},
+                  colors: {primary: 'orange'},
                 }}
                 style={styles.iconButton}
                 icon="hand-wave"
@@ -60,7 +60,7 @@ const TipLogCard = props => {
               />
               <IconButton
                 theme={{
-                  colors: {primary: theme.colors.tertiary},
+                  colors: {primary: 'lightgreen'},
                 }}
                 style={styles.iconButton}
                 icon="thumb-up"

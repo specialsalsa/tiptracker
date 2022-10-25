@@ -19,32 +19,45 @@ const TipLog = () => {
 
   const getTenOrders = async () => {
     setAnimating(true);
-    const res = await axios.get('https://wildlyle.dev:8020/getUserOrders', {
-      params: {
-        userKey: userKeyState,
-        page: requestCount + 1,
+    const res = await axios.get(
+      'https://myapiurlgoes.heere:8020/getUserOrders',
+      {
+        params: {
+          userKey: userKeyState,
+          page: requestCount + 1,
+        },
       },
-    });
-
-    let keyedOrders = res.data
-      .map((order, index) => {
-        return {
-          ...order,
-          key: index + requestCount * 10 + 1,
-        };
-      })
-      .reverse();
-
-    // filter out keyed orders that match an address in the completed order array to avoid duplicates
-    keyedOrders = keyedOrders.filter(
-      order => !completedOrders.some(ord => ord.address === order.address),
     );
 
-    keyedOrders = keyedOrders.filter(
-      order => !orders.some(ord => ord.address === order.address),
-    );
+    let keyedOrders;
 
-    requestCount++;
+    if (res.data) {
+      keyedOrders = res.data
+        .map((order, index) => {
+          return {
+            ...order,
+            key: index + requestCount * 10 + 1,
+          };
+        })
+        .reverse();
+
+      // filter out keyed orders that match an address in the completed order array to avoid duplicates
+      keyedOrders = keyedOrders.filter(
+        order => !completedOrders.some(ord => ord.address === order.address),
+      );
+
+      keyedOrders = keyedOrders.filter(
+        order => !orders.some(ord => ord.address === order.address),
+      );
+
+      if (keyedOrders.length !== 0) {
+        requestCount++;
+      } else {
+        requestCount = 0;
+      }
+    }
+
+    console.log(requestCount);
 
     setOrders([...keyedOrders, ...orders]);
     setAnimating(false);

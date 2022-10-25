@@ -86,7 +86,7 @@ const AddNewTipper = () => {
 
     try {
       const res = await axios.post(
-        'https://wildlyle.dev:8020/setTipDataManual',
+        'https://myapiurlgoes.heere:8020/setTipDataManual',
         null,
         {
           params: {
@@ -124,32 +124,36 @@ const AddNewTipper = () => {
         <View style={styles.textContainer}>
           <Text variant="headlineMedium">Add New Tipper</Text>
         </View>
-        <Button
-          style={styles.button}
-          icon="map-marker"
-          mode="contained"
-          loading={locationIsLoading}
-          onPress={handleGetLocation}>
-          Use current location
-        </Button>
-        <TextInput
-          style={styles.addressInput}
-          mode="outlined"
-          label="Address"
-          value={address}
-          onChangeText={address => setAddress(address)}></TextInput>
-        <TextInput
-          style={styles.addressInput}
-          mode="outlined"
-          label="City"
-          value={city}
-          onChangeText={city => setCity(city)}></TextInput>
-        <TextInput
-          style={styles.addressInput}
-          mode="outlined"
-          label="State"
-          value={state}
-          onChangeText={state => setState(state)}></TextInput>
+        <View style={styles.buttonContainer}>
+          <Button
+            style={styles.button}
+            icon="map-marker"
+            mode="contained"
+            loading={locationIsLoading}
+            onPress={handleGetLocation}>
+            Use current location
+          </Button>
+        </View>
+        <View style={{marginLeft: 20, marginRight: 20}}>
+          <TextInput
+            style={styles.addressInput}
+            mode="outlined"
+            label="Address"
+            value={address}
+            onChangeText={address => setAddress(address)}></TextInput>
+          <TextInput
+            style={styles.addressInput}
+            mode="outlined"
+            label="City"
+            value={city}
+            onChangeText={city => setCity(city)}></TextInput>
+          <TextInput
+            style={styles.addressInput}
+            mode="outlined"
+            label="State"
+            value={state}
+            onChangeText={state => setState(state)}></TextInput>
+        </View>
       </View>
       <RadioButton.Group
         onValueChange={tipRating => setTipRating(tipRating)}
@@ -165,14 +169,16 @@ const AddNewTipper = () => {
         </View>
       </RadioButton.Group>
       <View>
-        <Button
-          style={styles.button}
-          icon="check-bold"
-          mode="contained"
-          loading={submitIsLoading}
-          onPress={handlePost}>
-          Add New Tipper
-        </Button>
+        <View style={styles.buttonContainer}>
+          <Button
+            style={styles.button}
+            icon="check-bold"
+            mode="contained"
+            loading={submitIsLoading}
+            onPress={handlePost}>
+            Add New Tipper
+          </Button>
+        </View>
         <Portal>
           <Dialog visible={dialogVisible} onDismiss={hideDialog}>
             <Dialog.Title>Alert</Dialog.Title>
@@ -206,14 +212,13 @@ const AddNewTipper = () => {
 };
 
 const styles = StyleSheet.create({
-  container: {
-    // flex: 1,
-    // alignItems: 'center',
-    // justifyContent: 'center',
-    // backgroundColor: 'black',
-  },
   buttonContainer: {
-    marginTop: 20,
+    // marginTop: 20,
+    alignItems: 'center',
+  },
+
+  button: {
+    // width: '50%',
   },
 
   textContainer: {
