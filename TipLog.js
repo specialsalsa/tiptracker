@@ -5,10 +5,11 @@ import {Text, Button, ActivityIndicator, Portal} from 'react-native-paper';
 import {ToggleEnabledContext} from './App';
 import TipLogCard from './TipLogCard';
 import {FlatList, ScrollView} from 'react-native';
+import {useIsFocused} from '@react-navigation/native';
 
 let requestCount = 0;
 
-const TipLog = () => {
+const TipLog = props => {
   const {userKeyState, completedOrders} = useContext(ToggleEnabledContext);
   const [orders, setOrders] = useState([]);
   const [animating, setAnimating] = useState(false);
@@ -19,15 +20,12 @@ const TipLog = () => {
 
   const getTenOrders = async () => {
     setAnimating(true);
-    const res = await axios.get(
-      'https://myapiurlgoes.heere:8020/getUserOrders',
-      {
-        params: {
-          userKey: userKeyState,
-          page: requestCount + 1,
-        },
+    const res = await axios.get('https://wildlyle.dev:8020/getUserOrders', {
+      params: {
+        userKey: userKeyState,
+        page: requestCount + 1,
       },
-    );
+    });
 
     let keyedOrders;
 
@@ -62,6 +60,14 @@ const TipLog = () => {
     setOrders([...keyedOrders, ...orders]);
     setAnimating(false);
   };
+
+  const isFocused = useIsFocused();
+
+  useEffect(() => {
+    if (isFocused) {
+      getTenOrders();
+    }
+  }, [isFocused]);
 
   return (
     <View style={styles.container}>

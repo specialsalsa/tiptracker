@@ -79,7 +79,7 @@ const App = () => {
 
   const [completedOrders, setCompletedOrders] = useState([]);
 
-  const onSetTipData = tipRating => {
+  const onSetTipData = (addressesArray, tipRating) => {
     addressesArray.forEach(address => {
       addressRef.current = address.address;
 
@@ -138,23 +138,23 @@ const App = () => {
         case 'Bad':
           rating = 'Bad Tipper';
 
-          onSetTipData('Bad Tipper');
+          // onSetTipData(addressesArray, 'Bad Tipper');
           break;
 
         case 'Okay':
           rating = 'Okay Tipper';
-          onSetTipData('Okay Tipper');
+          // onSetTipData(addressesArray, 'Okay Tipper');
           break;
 
         case 'Great':
           rating = 'Great Tipper';
-          onSetTipData('Great Tipper');
+          // onSetTipData(addressesArray, 'Great Tipper');
           break;
       }
 
       if (notification.action !== 'Cancel') {
         try {
-          axios.post('https://myapiurlgoes.heere:8020/setTipData', null, {
+          axios.post('https://wildlyle.dev:8020/setTipData', null, {
             params: {
               address: addressRef.current,
               tipRating: rating,
@@ -287,7 +287,7 @@ const App = () => {
           // address = '8465 Broadway, Lemon Grove, CA 91945, USA';
 
           axios
-            .get('https://myapiurlgoes.heere:8020/getTipData', {
+            .get('https://wildlyle.dev:8020/getTipData', {
               params: {
                 address: addressRef.current,
               },

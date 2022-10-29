@@ -70,14 +70,11 @@ const TipperLookup = () => {
     }
 
     try {
-      const res = await axios.get(
-        'https://myapiurlgoes.heere:8020/getTipData',
-        {
-          params: {
-            address: addressString,
-          },
+      const res = await axios.get('https://wildlyle.dev:8020/getTipData', {
+        params: {
+          address: addressString,
         },
-      );
+      });
 
       if (res.data === 'no match found') {
         setTipData('No match found for this address.');

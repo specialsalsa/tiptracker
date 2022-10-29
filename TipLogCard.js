@@ -8,12 +8,14 @@ import axios from 'axios';
 const TipLogCard = props => {
   const theme = useTheme();
 
-  const [highlight, setHighlight] = useState(useHighlight(props.tipRating));
+  const [highlight, setHighlight, addressesArrayState, onSetTipData] = useState(
+    useHighlight(props.tipRating),
+  );
 
   const setTipData = async (address, tipRating) => {
     try {
       const res = await axios.post(
-        'https://myapiurlgoes.heere:8020/setTipData',
+        'https://wildlyle.dev:8020/setTipData',
         null,
         {
           params: {
@@ -24,6 +26,7 @@ const TipLogCard = props => {
       );
 
       setHighlight(useHighlight(tipRating));
+      // onSetTipData(addressesArrayState, tipRating);
     } catch (err) {
       console.log(err);
     }

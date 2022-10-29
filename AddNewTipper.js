@@ -86,7 +86,7 @@ const AddNewTipper = () => {
 
     try {
       const res = await axios.post(
-        'https://myapiurlgoes.heere:8020/setTipDataManual',
+        'https://wildlyle.dev:8020/setTipDataManual',
         null,
         {
           params: {

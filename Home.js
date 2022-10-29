@@ -46,7 +46,7 @@ const Home = props => {
   const handleDatabaseConnection = useCallback(async () => {
     try {
       const res = await fetch(
-        'https://myapiurlgoes.heere:8020/checkDatabaseConnection',
+        'https://wildlyle.dev:8020/checkDatabaseConnection',
       );
 
       if (!res.ok) {
