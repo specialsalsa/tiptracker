@@ -1,16 +1,12 @@
-import React, {useState} from 'react';
-
 const useHighlight = tipRating => {
-  let highlight = {};
+  let highlight = {bad: 'default', okay: 'default', great: 'default'};
 
   if (tipRating.includes('Bad') || tipRating.includes('Shit')) {
-    highlight = {bad: 'contained', okay: 'default', great: 'default'};
+    highlight.bad = 'contained';
   } else if (tipRating.includes('Okay')) {
-    highlight = {bad: 'default', okay: 'contained', great: 'default'};
+    highlight.okay = 'contained';
   } else if (tipRating.includes('Good') || tipRating.includes('Great')) {
-    highlight = {bad: 'default', okay: 'default', great: 'contained'};
-  } else {
-    highlight = {bad: 'default', okay: 'default', great: 'default'};
+    highlight.great = 'contained';
   }
 
   return highlight;
