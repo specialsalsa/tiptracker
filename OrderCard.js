@@ -12,7 +12,7 @@ import {
   Snackbar,
 } from 'react-native-paper';
 import {View, StyleSheet} from 'react-native';
-import React, {useContext, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {ToggleEnabledContext} from './App';
 import axios from 'axios';
 import PushNotification from 'react-native-push-notification';

@@ -79,7 +79,7 @@ const App = () => {
 
   const [completedOrders, setCompletedOrders] = useState([]);
 
-  const onSetTipData = (addressesArray, tipRating) => {
+  const onSetTipData = tipRating => {
     addressesArray.forEach(address => {
       addressRef.current = address.address;
 
@@ -138,17 +138,17 @@ const App = () => {
         case 'Bad':
           rating = 'Bad Tipper';
 
-          // onSetTipData(addressesArray, 'Bad Tipper');
+          onSetTipData('Bad Tipper');
           break;
 
         case 'Okay':
           rating = 'Okay Tipper';
-          // onSetTipData(addressesArray, 'Okay Tipper');
+          onSetTipData('Okay Tipper');
           break;
 
         case 'Great':
           rating = 'Great Tipper';
-          // onSetTipData(addressesArray, 'Great Tipper');
+          onSetTipData('Great Tipper');
           break;
       }
 
