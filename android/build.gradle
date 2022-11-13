@@ -3,7 +3,7 @@
 buildscript {
     ext {
         googlePlayServicesVersion = "17.0.0" // added this (push notifications)
-        firebaseVersion = "17.3.4" // added this
+        // firebaseVersion = "17.3.4" // added this
         buildToolsVersion = "30.0.2"
         // buildToolsVersion = "29.0.3"
         minSdkVersion = 21

@@ -23,9 +23,6 @@ const RSSCard = props => {
         setBody(rss.items[0].published);
         const date = new Date(rss.items[0].published).getTime();
 
-        console.log(date);
-        console.log(now - date);
-
         if (now - date > 1000 * 60 * 30) {
           setVisible(false);
           return;

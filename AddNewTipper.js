@@ -19,7 +19,7 @@ import {
   Snackbar,
 } from 'react-native-paper';
 
-import {ToggleEnabledContext} from './App';
+import {ToggleEnabledContext} from './App.js';
 
 const AddNewTipper = () => {
   const {userKeyState} = useContext(ToggleEnabledContext);

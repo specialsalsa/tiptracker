@@ -54,7 +54,7 @@ const OrderCard = props => {
         },
       );
 
-      onSetTipData(tipRating);
+      // onSetTipData(tipRating);
 
       return res;
     } catch (error) {

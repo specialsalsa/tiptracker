@@ -1,16 +1,24 @@
 import {View, StyleSheet} from 'react-native';
-import {Card, Title, IconButton, useTheme} from 'react-native-paper';
+import {
+  Card,
+  Title,
+  IconButton,
+  MD3DarkTheme,
+  MD3Colors,
+} from 'react-native-paper';
 
-import React, {useState} from 'react';
+import React, {useState, useReducer} from 'react';
 import useHighlight from './hooks/useHighlight';
 import axios from 'axios';
 
 const TipLogCard = props => {
-  const theme = useTheme();
+  const [highlight, setHighlight] = useState(useHighlight(props.tipRating));
 
-  const [highlight, setHighlight, addressesArrayState, onSetTipData] = useState(
-    useHighlight(props.tipRating),
-  );
+  const [selected, setIsSelected] = useState({
+    red: props.tipRating === 'Bad Tipper',
+    orange: props.tipRating === 'Okay Tipper',
+    green: props.tipRating === 'Great Tipper',
+  });
 
   const setTipData = async (address, tipRating) => {
     try {
@@ -26,6 +34,15 @@ const TipLogCard = props => {
       );
 
       setHighlight(useHighlight(tipRating));
+
+      if (tipRating === 'Bad Tipper')
+        setIsSelected({red: true, orange: false, green: false});
+
+      if (tipRating === 'Okay Tipper')
+        setIsSelected({red: false, orange: true, green: false});
+      if (tipRating === 'Great Tipper')
+        setIsSelected({red: false, orange: false, green: true});
+
       // onSetTipData(addressesArrayState, tipRating);
     } catch (err) {
       console.log(err);
@@ -41,35 +58,33 @@ const TipLogCard = props => {
             <Title>{props.address}</Title>
             <View style={styles.iconContainer}>
               <IconButton
-                theme={{
-                  colors: {primary: 'indianred'},
-                }}
                 icon="thumb-down"
+                iconColor={selected.red ? 'indianred' : MD3Colors.neutral80}
                 mode={highlight.bad}
                 onPress={() => {
                   setTipData(props.address, 'Bad Tipper');
+                  setIsSelected({red: true, orange: false, green: false});
                 }}
               />
               <IconButton
-                theme={{
-                  colors: {primary: 'orange'},
-                }}
                 style={styles.iconButton}
                 icon="hand-wave"
+                iconColor={selected.orange ? 'orange' : MD3Colors.neutral80}
                 mode={highlight.okay}
                 onPress={() => {
                   setTipData(props.address, 'Okay Tipper');
+                  setIsSelected({red: false, orange: true, green: false});
                 }}
               />
               <IconButton
-                theme={{
-                  colors: {primary: 'lightgreen'},
-                }}
+                // iconColor="green"
                 style={styles.iconButton}
                 icon="thumb-up"
+                iconColor={selected.green ? 'lightgreen' : MD3Colors.neutral80}
                 mode={highlight.great}
                 onPress={() => {
                   setTipData(props.address, 'Great Tipper');
+                  setIsSelected({red: false, orange: false, green: true});
                 }}
               />
             </View>

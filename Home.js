@@ -2,7 +2,7 @@ import React, {useContext, useState, useEffect, useCallback} from 'react';
 import {View, SafeAreaView, StyleSheet, PermissionsAndroid} from 'react-native';
 import {Button, Switch, Text, Card} from 'react-native-paper';
 import ReactNativeForegroundService from '@supersami/rn-foreground-service';
-import {ToggleEnabledContext} from './App';
+import {ToggleEnabledContext} from './App.js';
 import OrderCard from './OrderCard';
 import UpdateBanner from './UpdateBanner';
 import UpdateSnackbar from './UpdateSnackbar';
@@ -19,8 +19,6 @@ const Home = props => {
   const [updateText, setUpdateText] = useState('');
 
   const [isConnected, setIsConnected] = useState(false);
-
-  const [isChecking, setIsChecking] = useState(false);
 
   const [snackbarContent, setSnackbarContent] = useState(
     "Nothing else matters when I'm with you",
@@ -152,7 +150,6 @@ const Home = props => {
           <OnlineChip
             isConnected={isConnected}
             setIsConnected={setIsConnected}
-            isChecking={isChecking}
           />
         </View>
         {serviceIsStarted ? <StopButton /> : <StartButton />}

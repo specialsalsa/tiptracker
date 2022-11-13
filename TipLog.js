@@ -2,7 +2,7 @@ import React, {useState, useEffect, useContext} from 'react';
 import axios from 'axios';
 import {StyleSheet, View} from 'react-native';
 import {Text, Button, ActivityIndicator, Portal} from 'react-native-paper';
-import {ToggleEnabledContext} from './App';
+import {ToggleEnabledContext} from './App.js';
 import TipLogCard from './TipLogCard';
 import {FlatList, ScrollView} from 'react-native';
 import {useIsFocused} from '@react-navigation/native';

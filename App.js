@@ -69,15 +69,13 @@ const App = () => {
 
   const [toggleEnabled, setToggleEnabled] = useState(true);
 
-  const [currentlyTracking, setCurrentlyTracking] = useState(false);
+  let currentlyTracking = false;
 
   let rating;
 
-  const [address, setAddress] = useState('');
-
   const [addressesArrayState, setAddressesArrayState] = useState([]);
 
-  const [completedOrders, setCompletedOrders] = useState([]);
+  let completedOrders = [];
 
   const onSetTipData = tipRating => {
     addressesArray.forEach(address => {
@@ -85,13 +83,13 @@ const App = () => {
 
       address.tipRating = tipRating;
 
-      setCompletedOrders(addressesArray);
+      completedOrders = addressesArray;
 
       addressesArray = addressesArray?.filter?.(
         order => order.key !== address.key,
       );
       setAddressesArrayState(addressesArray);
-      if (!addressesArray) setCurrentlyTracking(false);
+      if (!addressesArray) currentlyTracking = false;
     });
   };
 
@@ -103,11 +101,9 @@ const App = () => {
     toggleEnabled,
     setToggleEnabled,
     rating,
-    address,
     addressesArrayState,
     setAddressesArrayState,
     currentlyTracking,
-    setCurrentlyTracking,
     userKeyState,
     completedOrders,
     onSetTipData,
@@ -132,7 +128,7 @@ const App = () => {
     },
 
     onAction: notification => {
-      setCurrentlyTracking(false);
+      currentlyTracking = false;
 
       switch (notification.action) {
         case 'Bad':
@@ -166,7 +162,7 @@ const App = () => {
         }
       }
 
-      setAddress('');
+      address = '';
     },
 
     popInitialNotification: true,
@@ -329,7 +325,7 @@ const App = () => {
           !currentlyTracking
         ) {
           TrackingNotification();
-          setCurrentlyTracking(true);
+          currentlyTracking = true;
           watchPosition();
 
           addressesArray.forEach(order => {
@@ -382,7 +378,6 @@ const App = () => {
     rating,
     restaurant,
     currentlyTracking,
-    setCurrentlyTracking,
   ]);
 
   // askBackgroundPermission();
