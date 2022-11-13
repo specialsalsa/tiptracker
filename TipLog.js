@@ -57,7 +57,7 @@ const TipLog = props => {
 
     console.log(requestCount);
 
-    setOrders([...keyedOrders, ...orders]);
+    setOrders(() => [...keyedOrders, ...orders]);
     setAnimating(false);
   };
 

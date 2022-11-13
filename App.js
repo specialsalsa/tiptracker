@@ -47,15 +47,6 @@ const theme = {
 let addressesArray = [];
 
 const App = () => {
-  const colorScheme = useColorScheme();
-
-  // useEffect(() => {
-  //   CodePush.sync({
-  //     updateDialog: false,
-  //     installMode: CodePush.InstallMode.IMMEDIATE,
-  //   });
-  // }, []);
-
   const [userKeyState, setUserKeyState] = useState('');
 
   useEffect(() => {
@@ -79,7 +70,7 @@ const App = () => {
 
   const onSetTipData = tipRating => {
     addressesArray.forEach(address => {
-      addressRef.current = address.address;
+      address = address.address;
 
       address.tipRating = tipRating;
 
@@ -93,7 +84,8 @@ const App = () => {
     });
   };
 
-  const addressRef = useRef('');
+  let address = '';
+
   let restaurant;
   let itemCount;
 
@@ -108,8 +100,6 @@ const App = () => {
     completedOrders,
     onSetTipData,
   };
-
-  let addressLocation = {};
 
   let notiSent = false;
 
@@ -152,7 +142,7 @@ const App = () => {
         try {
           axios.post('https://wildlyle.dev:8020/setTipData', null, {
             params: {
-              address: addressRef.current,
+              address: address,
               tipRating: rating,
               userKey: userKeyState,
             },
@@ -198,7 +188,7 @@ const App = () => {
             )
           ) {
             Geolocation.clearWatch(locationId);
-            // addressRef.current = address.address;
+            // address = address.address;
 
             // setCompletedOrders(addressesArray);
 
@@ -236,9 +226,9 @@ const App = () => {
           // PushNotification.cancelLocalNotification('4');
           const regex = /(.*$)/;
           // setAddress(() => parsedNoti.bigText.match(regex)[0]);
-          addressRef.current = parsedNoti.bigText.match(regex)[0];
+          address = parsedNoti.bigText.match(regex)[0];
 
-          addressRef.current = replaceWithAbbreviation(addressRef.current);
+          address = replaceWithAbbreviation(address);
 
           restaurant = parsedNoti.bigText.replace('New Order: Go to ', '');
           restaurant = restaurant.match(/^(.*)$/m)[0];
@@ -258,7 +248,7 @@ const App = () => {
               active: false,
               itemCount: itemCount,
               restaurant: restaurant,
-              address: addressRef.current,
+              address: address,
               tipRating: rating || '',
             });
 
@@ -285,7 +275,7 @@ const App = () => {
           axios
             .get('https://wildlyle.dev:8020/getTipData', {
               params: {
-                address: addressRef.current,
+                address: address,
               },
             })
             .then(response => {
@@ -347,7 +337,7 @@ const App = () => {
           // axios
           //   .get('https://nominatim.openstreetmap.org/search', {
           //     params: {
-          //       q: addressRef.current,
+          //       q: address,
           //       format: 'json',
           //     },
           //   })
@@ -372,13 +362,7 @@ const App = () => {
       RNAndroidNotificationListenerHeadlessJsName,
       () => headlessNotificationListener,
     );
-  }, [
-    addressRef.current,
-    addressesArray,
-    rating,
-    restaurant,
-    currentlyTracking,
-  ]);
+  }, [address, addressesArray, rating, restaurant, currentlyTracking]);
 
   // askBackgroundPermission();
 
