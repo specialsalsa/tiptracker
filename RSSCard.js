@@ -2,6 +2,8 @@ import {Card, Paragraph, Button} from 'react-native-paper';
 import React, {useEffect, useState, useCallback} from 'react';
 import {Text, Linking, StyleSheet, ScrollView} from 'react-native';
 import * as rssParser from 'react-native-rss-parser';
+import {LocalNotification, RSSNotification} from './LocalPushController';
+import PushNotification from 'react-native-push-notification';
 
 let isDismissed = false;
 
@@ -27,6 +29,11 @@ const RSSCard = props => {
           setVisible(false);
           return;
         }
+
+        PushNotification.getDeliveredNotifications(notifications => {
+          if (notifications.some(noti => noti.identifier === '6')) return;
+          RSSNotification(rss.items[0].title, rss.items[0].published);
+        });
 
         setLink(rss.items[0].links[0].url);
 
@@ -62,7 +69,7 @@ const RSSCard = props => {
     <>
       {visible && (
         <Card style={styles.card}>
-          <Card.Title title={title} />
+          <Card.Title titleNumberOfLines={2} title={title} />
           <Card.Content>
             <Text style={statusStyle}>{status}</Text>
             <Paragraph>{body}</Paragraph>

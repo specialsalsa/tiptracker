@@ -59,9 +59,29 @@ export const LocalNotification = (title, message) => {
     priority: 'max',
     soundName: 'default',
     invokeApp: false,
+    id: '1',
   });
 };
 
+export const RSSNotification = (title, message) => {
+  PushNotification.localNotification({
+    // onlyAlertOnce: true,
+    channelId: '1',
+    // bigText:
+    //   'This is local notification demo in React Native app. Only shown, when expanded.',
+    // subText: 'Local Notification Demo',
+    title: title,
+    message: message,
+    vibrate: true,
+    vibration: 300,
+    playSound: true,
+    priority: 'max',
+    soundName: 'default',
+    invokeApp: true,
+    id: '6',
+  });
+};
+LocalNotification;
 export const TipLogNotification = () => {
   PushNotification.localNotification({
     autoCancel: true,

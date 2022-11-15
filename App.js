@@ -111,6 +111,11 @@ const App = () => {
       if (notification.id === '3') {
         PushNotification.cancelLocalNotification('3');
       }
+
+      if (notification.id === '1') {
+        PushNotification.cancelLocalNotification('1');
+      }
+
       if (notification.id === '4') {
         // PushNotification.cancelLocalNotification('4');
         notiSent = true;
