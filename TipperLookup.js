@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {View, StyleSheet} from 'react-native';
+import {View, StyleSheet, ScrollView} from 'react-native';
 import {getStateAbbreviation} from './HelperFunctions';
 import {
   TextInput,
@@ -14,11 +14,20 @@ import {
   MD3DarkTheme as DefaultTheme,
 } from 'react-native-paper';
 import axios from 'axios';
+import TipLogCard from './TipLogCard';
+
+let timer;
+function debounce(func, timeout = 400) {
+  return (...args) => {
+    clearTimeout(timer);
+    timer = setTimeout(() => {
+      func.apply(this, args);
+    }, timeout);
+  };
+}
 
 const TipperLookup = () => {
   const [address, setAddress] = useState('');
-  const [city, setCity] = useState('');
-  const [state, setState] = useState('');
   const [submitIsLoading, setSubmitIsLoading] = useState('');
 
   const [dialogVisible, setDialogVisible] = useState(false);
@@ -35,42 +44,27 @@ const TipperLookup = () => {
   };
 
   const handleLookupTipper = () => {
+    console.log('hi');
     setSubmitIsLoading(true);
-    postToDatabase(address.trim(), city.trim(), state.trim()).then(res => {
-      if (
-        res.data.tipRating?.includes('Good') ||
-        res.data.tipRating?.includes('Great')
-      ) {
-        handleSetFillColor('darkgreen');
-      } else if (
-        res.data.tipRating?.includes('Bad') ||
-        res.data.tipRating?.includes('Shit')
-      ) {
-        handleSetFillColor('darkred');
-      } else {
-        handleSetFillColor('grey');
-      }
+    postToDatabase(address.trim()).then(res => {
       setSubmitIsLoading(false);
     });
   };
 
+  const doTheThing = debounce(() => handleLookupTipper());
+
   const showDialog = () => setDialogVisible(true);
   const hideDialog = () => setDialogVisible(false);
 
-  const [tipData, setTipData] = useState('');
+  const [tipData, setTipData] = useState([]);
 
-  const postToDatabase = async (address, city, state) => {
-    const addressString = `${address}, ${city}, ${getStateAbbreviation(
-      state,
-    )}`.trim();
+  const postToDatabase = async address => {
+    const addressString = address.trim();
 
-    if (!address || !city || !state) {
-      showDialog();
-      return;
-    }
+    if (!addressString) return;
 
     try {
-      const res = await axios.get('https://wildlyle.dev:8020/getTipData', {
+      const res = await axios.get('https://wildlyle.dev:8020/lookupTippers', {
         params: {
           address: addressString,
         },
@@ -79,7 +73,8 @@ const TipperLookup = () => {
       if (res.data === 'no match found') {
         setTipData('No match found for this address.');
       } else {
-        setTipData(res.data.tipRating);
+        setTipData(res.data);
+        console.log(res.data[0].address);
         setTipDataVisible(true);
       }
 
@@ -90,7 +85,7 @@ const TipperLookup = () => {
   };
 
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.container}>
       <View style={styles.addressContainer}>
         <View style={styles.textContainer}>
           <Text variant="headlineMedium">Tipper Lookup</Text>
@@ -100,46 +95,20 @@ const TipperLookup = () => {
           mode="outlined"
           label="Address"
           value={address}
-          onChangeText={address => setAddress(address)}></TextInput>
-        <TextInput
-          style={styles.addressInput}
-          mode="outlined"
-          label="City"
-          value={city}
-          onChangeText={city => setCity(city)}></TextInput>
-        <TextInput
-          style={styles.addressInput}
-          mode="outlined"
-          label="State"
-          value={state}
-          onChangeText={state => setState(state)}></TextInput>
+          onChangeText={address => {
+            setAddress(address);
+            doTheThing();
+          }}></TextInput>
       </View>
-      <View style={styles.buttonContainer}>
-        <Button
-          style={styles.button}
-          icon="check-bold"
-          mode="contained"
-          loading={submitIsLoading}
-          onPress={handleLookupTipper}>
-          Lookup Tipper
-        </Button>
-      </View>
-
-      {tipDataVisible && (
-        <View style={styles.cardContainer}>
-          <Card theme={cardTheme} style={styles.card} mode="outlined">
-            <Card.Title
-              titleStyle={{color: 'white', textAlign: 'center'}}
-              title="Tip Data"
+      {tipData &&
+        tipData.map(customer => {
+          return (
+            <TipLogCard
+              tipRating={customer.tipRating}
+              address={customer.address}
             />
-            <Card.Content>
-              <Title style={{color: 'white', textAlign: 'center'}}>
-                {tipData}
-              </Title>
-            </Card.Content>
-          </Card>
-        </View>
-      )}
+          );
+        })}
       <Portal>
         <Dialog visible={dialogVisible} onDismiss={hideDialog}>
           <Dialog.Title>Alert</Dialog.Title>
@@ -151,7 +120,7 @@ const TipperLookup = () => {
           </Dialog.Actions>
         </Dialog>
       </Portal>
-    </View>
+    </ScrollView>
   );
 };
 
@@ -160,6 +129,8 @@ export default TipperLookup;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    marginLeft: 30,
+    marginRight: 30,
   },
 
   card: {
@@ -191,6 +162,10 @@ const styles = StyleSheet.create({
   addressInput: {
     marginStart: 20,
     marginEnd: 20,
+  },
+
+  addressContainer: {
+    marginBottom: 20,
   },
 
   textContainer: {

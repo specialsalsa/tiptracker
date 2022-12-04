@@ -53,9 +53,9 @@ const TipLogCard = props => {
     <>
       <View style={styles.cardContainer}>
         <Card style={styles.card} elevation={2} mode="outlined">
-          <Card.Title style={{marginBottom: -10}} title="Logged Order" />
+          <Card.Title style={{marginBottom: -10}} title={props.address} />
           <Card.Content>
-            <Title>{props.address}</Title>
+            {/* <Title style={{fontSize: 16}}>{props.address}</Title> */}
             <View style={styles.iconContainer}>
               <IconButton
                 icon="thumb-down"
