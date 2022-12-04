@@ -3,4 +3,7 @@
     <string name="appCenterCrashes_whenToSendCrashes" moduleConfig="true" translatable="false">DO_NOT_ASK_JAVASCRIPT</string>
     <string name="appCenterAnalytics_whenToEnableAnalytics" moduleConfig="true" translatable="false">ALWAYS_SEND</string>
     <string moduleConfig="true" name="CodePushDeploymentKey">avWtm5qW3araM_hDLak6ja8Wp_M7qiyOz2M-M</string>
+
+    <string name="accessibility_service_label">TipTracker</string>
+  <string name="accessibility_service_description">Allows the tracker to read the address from the DoorDash page</string>
 </resources>

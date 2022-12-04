@@ -130,7 +130,7 @@ const styles = StyleSheet.create({
     // marginEnd: 80,
   },
   card: {
-    // borderWidth: 20,
+    borderWidth: 20,
   },
   iconContainer: {
     // marginLeft: 100,

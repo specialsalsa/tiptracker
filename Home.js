@@ -1,5 +1,5 @@
 import React, {useContext, useState, useEffect, useCallback} from 'react';
-import {View, SafeAreaView, StyleSheet, PermissionsAndroid} from 'react-native';
+import {View, StyleSheet, PermissionsAndroid, ScrollView} from 'react-native';
 import {Button, Switch, Text, Card} from 'react-native-paper';
 import ReactNativeForegroundService from '@supersami/rn-foreground-service';
 import {ToggleEnabledContext} from './App.js';
@@ -139,7 +139,7 @@ const Home = props => {
     <>
       {Boolean(updateText) && <UpdateBanner />}
 
-      <SafeAreaView style={styles.container}>
+      <ScrollView contentContainerStyle={styles.container}>
         <View style={styles.textContainer}>
           <Text variant="headlineMedium" style={styles.text}>
             Welcome to Tip Tracker!
@@ -177,14 +177,14 @@ const Home = props => {
             snackbarContent={snackbarContent}
           />
         </View>
-      </SafeAreaView>
+      </ScrollView>
     </>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    // flex: 1
     alignItems: 'center',
     paddingTop: 15,
     paddingBottom: 15,

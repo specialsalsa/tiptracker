@@ -1,5 +1,11 @@
 import React, {useState, createContext, useRef, useEffect} from 'react';
-import {AppRegistry, useColorScheme} from 'react-native';
+import {
+  AccessibilityInfo,
+  AppRegistry,
+  NativeAppEventEmitter,
+  NativeEventEmitter,
+  useColorScheme,
+} from 'react-native';
 import {View, Text, StyleSheet} from 'react-native';
 import {RNAndroidNotificationListenerHeadlessJsName} from 'react-native-android-notification-listener';
 import {
@@ -270,7 +276,7 @@ const App = () => {
                 addressesArray.pop();
               }
             }
-            console.log(addressesArray);
+            // console.log(addressesArray);
           };
 
           addAddress();
@@ -367,7 +373,14 @@ const App = () => {
       RNAndroidNotificationListenerHeadlessJsName,
       () => headlessNotificationListener,
     );
-  }, [address, addressesArray, rating, restaurant, currentlyTracking]);
+  }, [
+    address,
+    addressesArray,
+    rating,
+    restaurant,
+    currentlyTracking,
+    toggleEnabled,
+  ]);
 
   // askBackgroundPermission();
 
