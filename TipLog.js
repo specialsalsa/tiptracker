@@ -84,16 +84,14 @@ const TipLog = props => {
         animating={animating}
       />
       <ScrollView>
-        <View style={styles.cardContainer}>
-          {orders &&
-            orders.map(order => (
-              <TipLogCard
-                address={order.address}
-                key={order.key}
-                tipRating={order.tipRating}
-              />
-            ))}
-        </View>
+        {orders &&
+          orders.map(order => (
+            <TipLogCard
+              address={order.address}
+              key={order.key}
+              tipRating={order.tipRating}
+            />
+          ))}
       </ScrollView>
     </View>
   );

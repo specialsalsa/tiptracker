@@ -1,5 +1,12 @@
 import {Card, Paragraph, Button} from 'react-native-paper';
-import React, {useEffect, useState, useCallback} from 'react';
+import React, {
+  useEffect,
+  useState,
+  useCallback,
+  useContext,
+  useMemo,
+} from 'react';
+import {ToggleEnabledContext} from './App.js';
 import {Text, Linking, StyleSheet, ScrollView} from 'react-native';
 import * as rssParser from 'react-native-rss-parser';
 import {LocalNotification, RSSNotification} from './LocalPushController';
@@ -8,10 +15,11 @@ import PushNotification from 'react-native-push-notification';
 let isDismissed = false;
 
 const RSSCard = props => {
-  const [title, setTitle] = useState('asdf');
-  const [body, setBody] = useState('asdf');
-  const [link, setLink] = useState('asdf');
-  const [status, setStatus] = useState('asdf');
+  const {rssOn} = useContext(ToggleEnabledContext);
+  const [title, setTitle] = useState('');
+  const [body, setBody] = useState('');
+  const [link, setLink] = useState('');
+  const [status, setStatus] = useState('');
   const [visible, setVisible] = useState(true);
   const [statusStyle, setStatusStyle] = useState({});
 
@@ -32,7 +40,10 @@ const RSSCard = props => {
 
         PushNotification.getDeliveredNotifications(notifications => {
           if (notifications.some(noti => noti.identifier === '6')) return;
-          RSSNotification(rss.items[0].title, rss.items[0].published);
+
+          if (rssOn) {
+            RSSNotification(rss.items[0].title, rss.items[0].published);
+          }
         });
 
         setLink(rss.items[0].links[0].url);
@@ -55,15 +66,19 @@ const RSSCard = props => {
           setVisible(true);
         }
       });
-  });
+  }, [rssOn]);
 
   useEffect(() => {
     getRSS();
 
-    setInterval(() => {
+    const timer = setTimeout(() => {
       getRSS();
-    }, 60000);
-  }, []);
+    }, 10000);
+
+    return () => {
+      clearTimeout(timer);
+    };
+  }, [rssOn]);
 
   return (
     <>

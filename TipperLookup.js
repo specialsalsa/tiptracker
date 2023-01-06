@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useCallback, useState, useRef} from 'react';
 import {View, StyleSheet, ScrollView} from 'react-native';
 import {getStateAbbreviation} from './HelperFunctions';
 import {
@@ -15,19 +15,10 @@ import {
 } from 'react-native-paper';
 import axios from 'axios';
 import TipLogCard from './TipLogCard';
-
-let timer;
-function debounce(func, timeout = 400) {
-  return (...args) => {
-    clearTimeout(timer);
-    timer = setTimeout(() => {
-      func.apply(this, args);
-    }, timeout);
-  };
-}
+import _debounce from 'lodash/debounce';
 
 const TipperLookup = () => {
-  const [address, setAddress] = useState('');
+  const address = useRef('');
   const [submitIsLoading, setSubmitIsLoading] = useState('');
 
   const [dialogVisible, setDialogVisible] = useState(false);
@@ -46,12 +37,10 @@ const TipperLookup = () => {
   const handleLookupTipper = () => {
     console.log('hi');
     setSubmitIsLoading(true);
-    postToDatabase(address.trim()).then(res => {
+    postToDatabase(address.current.trim()).then(res => {
       setSubmitIsLoading(false);
     });
   };
-
-  const doTheThing = debounce(() => handleLookupTipper());
 
   const showDialog = () => setDialogVisible(true);
   const hideDialog = () => setDialogVisible(false);
@@ -59,9 +48,12 @@ const TipperLookup = () => {
   const [tipData, setTipData] = useState([]);
 
   const postToDatabase = async address => {
-    const addressString = address.trim();
+    const addressString = address;
 
-    if (!addressString) return;
+    if (!addressString) {
+      setTipData([]);
+      return;
+    }
 
     try {
       const res = await axios.get('https://wildlyle.dev:8020/lookupTippers', {
@@ -74,7 +66,7 @@ const TipperLookup = () => {
         setTipData('No match found for this address.');
       } else {
         setTipData(res.data);
-        console.log(res.data[0].address);
+
         setTipDataVisible(true);
       }
 
@@ -84,6 +76,7 @@ const TipperLookup = () => {
     }
   };
 
+  const doTheThing = useCallback(_debounce(handleLookupTipper, 180), []);
   return (
     <ScrollView style={styles.container}>
       <View style={styles.addressContainer}>
@@ -95,8 +88,8 @@ const TipperLookup = () => {
           mode="outlined"
           label="Address"
           value={address}
-          onChangeText={address => {
-            setAddress(address);
+          onChangeText={add => {
+            address.current = add;
             doTheThing();
           }}></TextInput>
       </View>
@@ -106,6 +99,7 @@ const TipperLookup = () => {
             <TipLogCard
               tipRating={customer.tipRating}
               address={customer.address}
+              note={customer.note}
             />
           );
         })}

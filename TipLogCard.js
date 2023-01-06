@@ -1,4 +1,4 @@
-import {View, StyleSheet} from 'react-native';
+import {View, StyleSheet, Dimensions} from 'react-native';
 import {
   Card,
   Title,
@@ -55,7 +55,9 @@ const TipLogCard = props => {
         <Card style={styles.card} elevation={2} mode="outlined">
           <Card.Title style={{marginBottom: -10}} title={props.address} />
           <Card.Content>
-            {/* <Title style={{fontSize: 16}}>{props.address}</Title> */}
+            <Title style={{fontSize: 16}}>
+              {props.note ? props.note : null}
+            </Title>
             <View style={styles.iconContainer}>
               <IconButton
                 icon="thumb-down"
@@ -107,7 +109,7 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     flexGrow: 1,
     flexBasis: 'auto',
-    width: 'auto',
+    // width: 'auto',
   },
   snackbarContainer: {
     // flex: 1,
@@ -117,6 +119,7 @@ const styles = StyleSheet.create({
   },
   card: {
     // borderWidth: 20,
+    width: Dimensions.get('window').width / 1.2,
   },
   iconContainer: {
     // marginLeft: 100,

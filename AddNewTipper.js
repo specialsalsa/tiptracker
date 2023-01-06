@@ -1,5 +1,6 @@
 import React, {useState, useReducer, useContext} from 'react';
-import {View, StyleSheet} from 'react-native';
+import {View, StyleSheet, KeyboardAvoidingView} from 'react-native';
+import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import {getStateAbbreviation} from './HelperFunctions';
 
 import Geolocation from 'react-native-geolocation-service';
@@ -27,6 +28,7 @@ const AddNewTipper = () => {
   const [address, setAddress] = useState('');
   const [city, setCity] = useState('');
   const [state, setState] = useState('');
+  const [note, setNote] = useState('');
 
   const [locationIsLoading, setLocationIsLoading] = useState('');
 
@@ -93,6 +95,7 @@ const AddNewTipper = () => {
             address: addressString,
             tipRating: tipRating,
             userKey: userKeyState,
+            ...(note && {note: note}),
           },
         },
       );
@@ -119,7 +122,7 @@ const AddNewTipper = () => {
   };
 
   return (
-    <View style={styles.container}>
+    <KeyboardAwareScrollView behavior="padding" style={styles.container}>
       <View style={styles.addressContainer}>
         <View style={styles.textContainer}>
           <Text variant="headlineMedium">Add New Tipper</Text>
@@ -168,6 +171,14 @@ const AddNewTipper = () => {
           <RadioButton.Item label="Great Tipper" value="Great Tipper" />
         </View>
       </RadioButton.Group>
+      <View style={{marginLeft: 20, marginRight: 20}}>
+        <TextInput
+          style={styles.addressInput}
+          mode="outlined"
+          label="Optional: Add a note"
+          value={note}
+          onChangeText={note => setNote(note)}></TextInput>
+      </View>
       <View>
         <View style={styles.buttonContainer}>
           <Button
@@ -207,18 +218,22 @@ const AddNewTipper = () => {
           {snackbarContent}
         </Snackbar>
       </View>
-    </View>
+    </KeyboardAwareScrollView>
   );
 };
 
 const styles = StyleSheet.create({
   buttonContainer: {
-    // marginTop: 20,
+    marginTop: 20,
     alignItems: 'center',
   },
 
   button: {
     // width: '50%',
+  },
+
+  container: {
+    flex: 1,
   },
 
   textContainer: {

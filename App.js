@@ -5,6 +5,7 @@ import {
   NativeAppEventEmitter,
   NativeEventEmitter,
   useColorScheme,
+  PermissionsAndroid,
 } from 'react-native';
 import {View, Text, StyleSheet} from 'react-native';
 import {RNAndroidNotificationListenerHeadlessJsName} from 'react-native-android-notification-listener';
@@ -64,9 +65,17 @@ const App = () => {
     setKeyState();
   }, []);
 
+  useEffect(() => {
+    PermissionsAndroid.request(
+      PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+    );
+  }, []);
+
   const [toggleEnabled, setToggleEnabled] = useState(true);
 
-  let currentlyTracking = false;
+  const [rssOn, setRssOn] = useState(true);
+
+  const [currentlyTracking, setCurrentlyTracking] = useState(false);
 
   let rating;
 
@@ -86,7 +95,7 @@ const App = () => {
         order => order.key !== address.key,
       );
       setAddressesArrayState(addressesArray);
-      if (!addressesArray) currentlyTracking = false;
+      if (!addressesArray) setCurrentlyTracking(false);
     });
   };
 
@@ -97,11 +106,14 @@ const App = () => {
 
   const state = {
     toggleEnabled,
+    rssOn,
+    setRssOn,
     setToggleEnabled,
     rating,
     addressesArrayState,
     setAddressesArrayState,
     currentlyTracking,
+    setCurrentlyTracking,
     userKeyState,
     completedOrders,
     onSetTipData,
@@ -129,7 +141,7 @@ const App = () => {
     },
 
     onAction: notification => {
-      currentlyTracking = false;
+      setCurrentlyTracking(false);
 
       switch (notification.action) {
         case 'Bad':
@@ -326,7 +338,7 @@ const App = () => {
           !currentlyTracking
         ) {
           TrackingNotification();
-          currentlyTracking = true;
+          setCurrentlyTracking(true);
           watchPosition();
 
           addressesArray.forEach(order => {

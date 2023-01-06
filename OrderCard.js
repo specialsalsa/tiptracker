@@ -78,7 +78,7 @@ const OrderCard = props => {
                 size={15}
                 onPress={() => {
                   setTipData('Bad Tipper');
-                  removeThisOrder();
+                  // removeThisOrder();
                 }}
               />
               <Button

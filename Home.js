@@ -26,6 +26,8 @@ const Home = props => {
 
   const [snackbarVisible, setSnackbarVisible] = useState(false);
 
+  const [RSSOn, setRSSOn] = useState(true);
+
   const navigation = useNavigation();
 
   useEffect(() => {
@@ -69,8 +71,13 @@ const Home = props => {
     });
   }, [handleDatabaseConnection]);
 
-  const {toggleEnabled, setToggleEnabled, addressesArrayState} =
-    useContext(ToggleEnabledContext);
+  const {
+    toggleEnabled,
+    setToggleEnabled,
+    rssOn,
+    setRssOn,
+    addressesArrayState,
+  } = useContext(ToggleEnabledContext);
 
   if (serviceIsStarted) {
     ReactNativeForegroundService.add_task(
@@ -90,13 +97,20 @@ const Home = props => {
       id: 144,
       title: 'Foreground Service',
       message: 'Tracking location',
-      importance: 2,
+      importance: 4,
     });
   }
 
   const handleNotiSwitch = () => {
     setToggleEnabled(!toggleEnabled);
   };
+
+  let doTheThing = false;
+
+  const handleRSSSwitch = () => {
+    setRssOn(!rssOn);
+  };
+
   const ToggleNotisSwitch = () => {
     return (
       <Switch
@@ -104,6 +118,12 @@ const Home = props => {
         value={toggleEnabled}
         onValueChange={handleNotiSwitch}
       />
+    );
+  };
+
+  const RSSOnSwitch = () => {
+    return (
+      <Switch style={{flex: 1}} value={rssOn} onValueChange={handleRSSSwitch} />
     );
   };
 
@@ -153,22 +173,28 @@ const Home = props => {
           />
         </View>
         {serviceIsStarted ? <StopButton /> : <StartButton />}
-        <RSSCard />
+        <RSSCard rssOn={rssOn} />
         <View style={styles.toggleContainer}>
           <Text style={styles.smallText}>Unlabeled Offer Notifications</Text>
           <ToggleNotisSwitch />
         </View>
 
+        <View style={styles.toggleContainer}>
+          <Text style={styles.smallText}>RSS Notifications</Text>
+          <RSSOnSwitch />
+        </View>
+
         <View style={styles.cardContainer}>
-          {addressesArrayState?.map?.(order => (
-            <OrderCard
-              key={order.key}
-              id={order.key}
-              restaurant={order.restaurant}
-              itemCount={order.itemCount}
-              address={order.address}
-            />
-          ))}
+          {addressesArrayState &&
+            addressesArrayState.map(order => (
+              <OrderCard
+                key={order.key}
+                id={order.key}
+                restaurant={order.restaurant}
+                itemCount={order.itemCount}
+                address={order.address}
+              />
+            ))}
         </View>
         <View style={styles.snackbarContainer}>
           <UpdateSnackbar
